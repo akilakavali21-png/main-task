@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Touch Animation Cards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@200;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #06060c;
+            --fg: #f0ece4;
+            --muted: #7a7586;
+            --card: #111119;
+            --border: #24243a;
+            --accent-1: #FF6B4A;
+            --accent-2: #00D4AA;
+            --accent-3: #FFB800;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ============ ANIMATED MESH BACKGROUND ============ */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 600px 400px at 15% 20%, rgba(255,107,74,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 500px at 85% 75%, rgba(0,212,170,0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 400px 300px at 50% 50%, rgba(255,184,0,0.05) 0%, transparent 70%),
+                var(--bg);
+            animation: bgShift 20s ease-in-out infinite alternate;
+        }
+        @keyframes bgShift {
+            0%   { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(15deg); }
+        }
+
+        /* Noise texture overlay */
+        .page-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+            pointer-events: none;
+        }
+
+        /* Flowing grid lines */
+        .grid-lines {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridDrift 30s linear infinite;
+        }
+        @keyframes gridDrift {
+            0%   { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        /* ============ PAGE LAYOUT ============ */
+        .page-content {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1.25rem;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: clamp(2rem, 5.5vw, 3.6rem);
+            text-align: center;
+            margin-bottom: 0.4rem;
+            background: linear-gradient(135deg, #fff 20%, var(--muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-subtitle {
+            color: var(--muted);
+            font-size: 0.95rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-weight: 300;
+            max-width: 480px;
+        }
+
+        /* ============ CARDS GRID ============ */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1120px;
+            width: 100%;
+        }
+        @media (max-width: 920px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                max-width: 380px;
+            }
+        }
+
+        .cards-grid > * {
+            opacity: 0;
+            transform: translateY(40px);
+            animation: cardEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .cards-grid > *:nth-child(1) { animation-delay: 0.15s; }
+        .cards-grid > *:nth-child(2) { animation-delay: 0.35s; }
+        .cards-grid > *:nth-child(3) { animation-delay: 0.55s; }
+        @keyframes cardEnter {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ====================================================
+           CARD 1 BACKGROUND: Animated Inner Gradient Orbs
+           - Dark base with moving color blobs inside the card
+           - No border, soft internal glow
+        ==================================================== */
+        .card-ripple {
+            position: relative;
+            background: #0d0a10;
+            border-radius: 24px;
+            padding: 1.75rem;
+            min-height: 370px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: box-shadow 0.4s ease, transform 0.4s ease;
+            user-select: none;
+            border: none;
+        }
+
+        /* Animated inner orbs */
+        .rp-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .rp-orb-1 {
+            width: 200px; height: 200px;
+            background: rgba(255,107,74,0.25);
+            top: -40px; left: -40px;
+            animation: orbFloat1 8s ease-in-out infinite;
+        }
+        .rp-orb-2 {
+            width: 160px; height: 160px;
+            background: rgba(255,60,80,0.2);
+            bottom: -30px; right: -20px;
+            animation: orbFloat2 10s ease-in-out infinite;
+        }
+        .rp-orb-3 {
+            width: 100px; height: 100px;
+            background: rgba(255,150,100,0.15);
+            top: 50%; left: 60%;
+            animation: orbFloat3 7s ease-in-out infinite;
+        }
+        @keyframes orbFloat1 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(60px,40px) scale(1.2); }
+            66% { transform: translate(-20px,60px) scale(0.9); }
+        }
+        @keyframes orbFloat2 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(-50px,-40px) scale(1.15); }
+        }
+        @keyframes orbFloat3 {
+            0%,100% { transform: translate(0,0); }
+            50% { transform: translate(-40px, 30px); }
+        }
+
+        .card-ripple:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 50px rgba(255,107,74,0.15);
+        }
+        .card-ripple.ripple-active {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 24px 60px rgba(255,107,74,0.3);
+        }
+
+        /* Ripple circles */
+        .ripple-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid var(--accent-1);
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0.7;
+            z-index: 1;
+        }
+        .ripple-circle.go {
+            animation: rippleGo 0.9s ease-out forwards;
+        }
+        @keyframes rippleGo {
+            0%   { transform: translate(-50%,-50%) scale(0); opacity: 0.7; }
+            100% { transform: translate(-50%,-50%) scale(5); opacity: 0; }
+        }
+
+        .badge {
+            position: absolute;
+            top: 0.85rem;
+            right: 0.85rem;
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            z-index: 5;
+            backdrop-filter: blur(8px);
+        }
+        .badge-1 { background: rgba(255,107,74,0.2); color: var(--accent-1); border: 1px solid rgba(255,107,74,0.2); }
+        .badge-2 { background: rgba(0,212,170,0.2); color: var(--accent-2); border: 1px solid rgba(0,212,170,0.2); }
+        .badge-3 { background: rgba(255,184,0,0.2); color: var(--accent-3); border: 1px solid rgba(255,184,0,0.2); }
+
+        .rp-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            transition: opacity 0.28s ease, transform 0.28s ease;
+            position: relative;
+            z-index: 2;
+        }
+        .rp-content.hide {
+            opacity: 0;
+            transform: scale(0.92);
+        }
+
+        .rp-icon {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--accent-1), #ff9070);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; color: #fff;
+            transition: transform 0.55s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 4px 20px rgba(255,107,74,0.3);
+        }
+        .card-ripple.ripple-active .rp-icon {
+            transform: rotate(360deg) scale(1.12);
+        }
+
+        .rp-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            line-height: 1.2;
+        }
+        .rp-artist {
+            color: var(--accent-1);
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+        .rp-bar-bg {
+            width: 100%; height: 5px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .rp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-1), #ff9070);
+            border-radius: 999px;
+            transition: width 0.6s ease;
+        }
+        .rp-times {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+        .rp-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 0.25rem;
+        }
+        .rp-ctrl-btn {
+            background: none; border: none;
+            color: var(--muted);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            padding: 4px;
+        }
+        .rp-ctrl-btn:hover { color: var(--fg); transform: scale(1.15); }
+        .rp-ctrl-btn.play-btn {
+            width: 42px; height: 42px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+        .rp-ctrl-btn.play-btn:hover {
+            background: #ff8060;
+            transform: scale(1.12);
+        }
+
+        /* ====================================================
+           CARD 2 BACKGROUND: Glassmorphism / Frosted Glass
+           - Semi-transparent with backdrop blur
+           - Visible grid pattern showing through
+           - Subtle refractive edge highlight
+        ==================================================== */
+        .flip-container {
+            perspective: 1200px;
+            min-height: 370px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Glassmorphism depth layers */
+        .glass-depth-1, .glass-depth-2 {
+            position: absolute;
+            border-radius: 24px;
+            pointer-events: none;
+            transition: transform 0.75s cubic-bezier(0.4,0,0.2,1), opacity 0.75s ease;
+        }
+        .glass-depth-1 {
+            top: 5px; left: 5px;
+            width: calc(100% - 10px);
+            height: calc(100% - 10px);
+            background: rgba(0,212,170,0.03);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(0,212,170,0.06);
+            z-index: -1;
+        }
+        .glass-depth-2 {
+            top: 10px; left: 10px;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            border-radius: 20px;
+            background: rgba(0,212,170,0.015);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(0,212,170,0.03);
+            z-index: -2;
+        }
+
+        .flipper {
+            position: relative;
+            width: 100%;
+            min-height: 370px;
+            transition: transform 0.75s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flipper.flipped {
+            transform: rotateY(180deg);
+        }
+        .flipper.flipped ~ .glass-depth-1,
+        .flipper.flipped ~ .glass-depth-2 {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .flip-face {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            min-height: 370px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.75rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+            /* GLASS EFFECT */
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.06) 0%,
+                rgba(255,255,255,0.02) 40%,
+                rgba(0,212,170,0.03) 100%
+            );
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Refractive light streak on glass */
+        .flip-face::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                135deg,
+                transparent 42%,
+                rgba(255,255,255,0.03) 45%,
+                rgba(255,255,255,0.06) 50%,
+                rgba(255,255,255,0.03) 55%,
+                transparent 58%
+            );
+            pointer-events: none;
+            animation: glassShine 6s ease-in-out infinite;
+        }
+        @keyframes glassShine {
+            0%,100% { transform: translateX(-30%) translateY(-30%) rotate(0deg); }
+            50% { transform: translateX(30%) translateY(30%) rotate(5deg); }
+        }
+
+        /* Inner grid visible through glass */
+        .flip-face::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .flip-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(
+                135deg,
+                rgba(0,212,170,0.08) 0%,
+                rgba(255,255,255,0.03) 50%,
+                rgba(0,212,170,0.05) 100%
+            );
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .fl-avatar {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-2), #00e8bc);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: #fff;
+            margin-bottom: 1.1rem;
+            box-shadow: 0 6px 28px rgba(0,212,170,0.35);
+            position: relative;
+            z-index: 1;
+        }
+        .fl-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700; font-size: 1.25rem;
+            margin-bottom: 0.2rem;
+            position: relative; z-index: 1;
+        }
+        .fl-role {
+            color: var(--accent-2);
+            font-size: 0.78rem; font-weight: 500;
+            margin-bottom: 0.85rem;
+            position: relative; z-index: 1;
+        }
+        .fl-bio {
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin-bottom: 1.2rem;
+            position: relative; z-index: 1;
+        }
+        .fl-stats {
+            display: flex; gap: 1.6rem;
+            position: relative; z-index: 1;
+        }
+        .fl-stat { text-align: center; }
+        .fl-stat-num {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900; font-size: 1.35rem;
+            color: var(--accent-2);
+        }
+        .fl-stat-lbl {
+            font-size: 0.65rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        .fl-back-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700; font-size: 1.15rem;
+            color: var(--accent-2);
+            margin-bottom: 1.2rem;
+            position: relative; z-index: 1;
+        }
+        .fl-skill { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.8rem; position: relative; z-index: 1; }
+        .fl-skill-name { font-size: 0.82rem; color: var(--muted); width: 75px; flex-shrink: 0; }
+        .fl-skill-track {
+            flex: 1; height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 999px; overflow: hidden;
+        }
+        .fl-skill-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-2), #00e8bc);
+            border-radius: 999px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.55s cubic-bezier(0.22,1,0.36,1);
+            box-shadow: 0 0 8px rgba(0,212,170,0.4);
+        }
+        .flipper.flipped .fl-skill-fill { transform: scaleX(1); }
+        .flipper.flipped .fl-skill:nth-child(2) .fl-skill-fill { transition-delay: 0.12s; }
+        .flipper.flipped .fl-skill:nth-child(3) .fl-skill-fill { transition-delay: 0.24s; }
+        .flipper.flipped .fl-skill:nth-child(4) .fl-skill-fill { transition-delay: 0.36s; }
+        .flipper.flipped .fl-skill:nth-child(5) .fl-skill-fill { transition-delay: 0.48s; }
+        .fl-skill-pct { font-size: 0.72rem; color: var(--accent-2); width: 32px; text-align: right; }
+
+        .fl-hint {
+            position: absolute;
+            bottom: 0.9rem; left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.68rem; color: var(--muted); opacity: 0.5;
+            white-space: nowrap;
+            z-index: 1;
+        }
+
+        /* ====================================================
+           CARD 3 BACKGROUND: Mesh Gradient + Dot Pattern
+           - Multi-color mesh gradient base
+           - Overlaid dot matrix pattern
+           - No border, organic flowing colors
+        ==================================================== */
+        .card-elastic {
+            position: relative;
+            border-radius: 24px;
+            padding: 1.75rem;
+            min-height: 370px;
+            cursor: pointer;
+            overflow: hidden;
+            user-select: none;
+            border: none;
+            /* Mesh gradient background */
+            background:
+                radial-gradient(ellipse 180px 140px at 20% 30%, rgba(255,184,0,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 140px 180px at 80% 20%, rgba(255,120,0,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 160px 120px at 70% 80%, rgba(255,200,50,0.1) 0%, transparent 70%),
+                radial-gradient(ellipse 120px 160px at 10% 85%, rgba(200,100,0,0.08) 0%, transparent 70%),
+                #0e0b06;
+        }
+
+        /* Dot pattern overlay */
+        .el-dots {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,184,0,0.08) 1px, transparent 1px);
+            background-size: 16px 16px;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 24px;
+        }
+
+        /* Animated mesh color shift */
+        .el-mesh-shift {
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background:
+                radial-gradient(circle 120px at 30% 40%, rgba(255,200,80,0.12) 0%, transparent 70%),
+                radial-gradient(circle 100px at 70% 60%, rgba(255,140,0,0.1) 0%, transparent 70%);
+            animation: meshDrift 12s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes meshDrift {
+            0%   { transform: translate(0,0) scale(1); }
+            33%  { transform: translate(20px,-15px) scale(1.1); }
+            66%  { transform: translate(-15px,20px) scale(0.95); }
+            100% { transform: translate(10px,10px) scale(1.05); }
+        }
+
+        /* SVG animated border */
+        .el-border-svg {
+            position: absolute;
+            top: -1px; left: -1px;
+            width: calc(100% + 2px);
+            height: calc(100% + 2px);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .el-border-svg rect {
+            fill: none;
+            stroke: var(--accent-3);
+            stroke-width: 2;
+            stroke-dasharray: 1400;
+            stroke-dashoffset: 1400;
+            rx: 24; ry: 24;
+            transition: stroke-dashoffset 0.85s cubic-bezier(0.65,0,0.35,1);
+        }
+        .card-elastic.el-active .el-border-svg rect {
+            stroke-dashoffset: 0;
+        }
+
+        /* Jelly wobble */
+        .card-elastic.el-wobble {
+            animation: jellyW 0.65s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        @keyframes jellyW {
+            0%   { transform: scale(1,1); }
+            15%  { transform: scale(0.94,1.06); }
+            30%  { transform: scale(1.06,0.94); }
+            45%  { transform: scale(0.97,1.03); }
+            60%  { transform: scale(1.03,0.97); }
+            75%  { transform: scale(0.99,1.01); }
+            100% { transform: scale(1,1); }
+        }
+
+        .el-glow {
+            position: absolute;
+            width: 220px; height: 220px;
+            background: radial-gradient(circle, rgba(255,184,0,0.22) 0%, transparent 70%);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%) scale(0);
+            pointer-events: none;
+            transition: transform 0.65s ease;
+            z-index: 0;
+        }
+        .card-elastic.el-active .el-glow {
+            transform: translate(-50%,-50%) scale(2.5);
+        }
+
+        .el-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            position: relative;
+            z-index: 2;
+        }
+        .el-icon {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--accent-3), #ffd24a);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; color: #1a1500;
+            transition: transform 0.55s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 4px 20px rgba(255,184,0,0.3);
+        }
+        .card-elastic.el-active .el-icon {
+            transform: scale(1.18) rotate(8deg);
+        }
+        .el-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700; font-size: 1.25rem;
+        }
+        .el-subtitle {
+            color: var(--muted); font-size: 0.82rem;
+        }
+
+        .el-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.65rem;
+        }
+        .el-stat-card {
+            background: rgba(255,184,0,0.06);
+            border: 1px solid rgba(255,184,0,0.1);
+            border-radius: 12px;
+            padding: 0.7rem 0.5rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(18px) scale(0.92);
+            transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1), background 0.3s;
+            backdrop-filter: blur(4px);
+        }
+        .card-elastic.el-active .el-stat-card {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .card-elastic.el-active .el-stat-card:nth-child(1) { transition-delay: 0.1s; }
+        .card-elastic.el-active .el-stat-card:nth-child(2) { transition-delay: 0.2s; }
+        .card-elastic.el-active .el-stat-card:nth-child(3) { transition-delay: 0.3s; }
+        .card-elastic.el-active .el-stat-card:nth-child(4) { transition-delay: 0.4s; }
+
+        .el-stat-card:hover {
+            background: rgba(255,184,0,0.12);
+        }
+        .el-stat-val {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900; font-size: 1.4rem;
+            color: var(--accent-3);
+            transition: transform 0.3s;
+        }
+        .el-stat-card:hover .el-stat-val { transform: scale(1.08); }
+        .el-stat-name {
+            font-size: 0.65rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.05em;
+            margin-top: 0.1rem;
+        }
+
+        /* ============ TOUCH HINT ============ */
+        .touch-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            font-size: 0.78rem;
+            margin-top: 2.5rem;
+            animation: hPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes hPulse {
+            0%,100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+        .touch-hint i { animation: hTap 2.5s ease-in-out infinite; }
+        @keyframes hTap {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.35); }
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            bottom: 2rem; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(16,16,24,0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--fg);
+            padding: 0.65rem 1.3rem;
+            border-radius: 14px;
+            font-size: 0.82rem;
+            z-index: 100;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* ============ REDUCED MOTION ============ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background -->
+    <div class="page-bg"></div>
+    <div class="grid-lines"></div>
+
+    <!-- Page Content -->
+    <div class="page-content">
+
+        <header style="text-align:center; margin-bottom:0.5rem;">
+            <h1 class="page-title">Touch to Animate</h1>
+            <p class="page-subtitle">Each card has a unique background style and a different touch animation</p>
+        </header>
+
+        <main class="cards-grid">
+
+            <!-- ====== CARD 1: ANIMATED ORB BACKGROUND + RIPPLE ====== -->
+            <div class="card-ripple" id="rippleCard" role="button" tabindex="0"
+                 aria-label="Ripple burst animation card, click to trigger">
+                <!-- Animated inner gradient orbs -->
+                <div class="rp-orb rp-orb-1"></div>
+                <div class="rp-orb rp-orb-2"></div>
+                <div class="rp-orb rp-orb-3"></div>
+                <span class="badge badge-1">Ripple Burst</span>
+                <div class="rp-content" id="rpContent">
+                    <div class="rp-icon"><i class="fas fa-music"></i></div>
+                    <div>
+                        <div class="rp-title" id="rpTitle">Midnight Dreams</div>
+                        <div class="rp-artist" id="rpArtist">Luna Ray</div>
+                    </div>
+                    <div>
+                        <div class="rp-bar-bg">
+                            <div class="rp-bar-fill" id="rpFill" style="width:65%"></div>
+                        </div>
+                        <div class="rp-times">
+                            <span id="rpCur">2:34</span>
+                            <span id="rpTotal">3:56</span>
+                        </div>
+                    </div>
+                    <div class="rp-controls">
+                        <button class="rp-ctrl-btn" aria-label="Previous"><i class="fas fa-backward-step"></i></button>
+                        <button class="rp-ctrl-btn play-btn" id="rpPlayBtn" aria-label="Play or Pause">
+                            <i class="fas fa-pause" id="rpPlayIcon"></i>
+                        </button>
+                        <button class="rp-ctrl-btn" aria-label="Next"><i class="fas fa-forward-step"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== CARD 2: GLASSMORPHISM BACKGROUND + 3D FLIP ====== -->
+            <div class="flip-container" id="flipCard" role="button" tabindex="0"
+                 aria-label="3D flip animation card, click to flip">
+                <div class="glass-depth-1"></div>
+                <div class="glass-depth-2"></div>
+                <div class="flipper" id="flipper">
+                    <!-- Front -->
+                    <div class="flip-face flip-front">
+                        <span class="badge badge-2">3D Flip</span>
+                        <div class="fl-avatar"><i class="fas fa-user"></i></div>
+                        <div class="fl-name">Arjun Mehta</div>
+                        <div class="fl-role">Senior UI Engineer</div>
+                        <div class="fl-bio">Crafting pixel-perfect interfaces and motion systems for products used by millions worldwide.</div>
+                        <div class="fl-stats">
+                            <div class="fl-stat">
+                                <div class="fl-stat-num">142</div>
+                                <div class="fl-stat-lbl">Projects</div>
+                            </div>
+                            <div class="fl-stat">
+                                <div class="fl-stat-num">8.4K</div>
+                                <div class="fl-stat-lbl">Followers</div>
+                            </div>
+                            <div class="fl-stat">
+                                <div class="fl-stat-num">97%</div>
+                                <div class="fl-stat-lbl">Rating</div>
+                            </div>
+                        </div>
+                        <div class="fl-hint"><i class="fas fa-rotate"></i>&ensp;Tap to flip</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="flip-face flip-back">
+                        <span class="badge badge-2">Skills</span>
+                        <div class="fl-back-title">Technical Proficiency</div>
+                        <div class="fl-skill">
+                            <span class="fl-skill-name">JavaScript</span>
+                            <div class="fl-skill-track"><div class="fl-skill-fill" style="width:95%"></div></div>
+                            <span class="fl-skill-pct">95%</span>
+                        </div>
+                        <div class="fl-skill">
+                            <span class="fl-skill-name">CSS / Anim</span>
+                            <div class="fl-skill-track"><div class="fl-skill-fill" style="width:90%"></div></div>
+                            <span class="fl-skill-pct">90%</span>
+                        </div>
+                        <div class="fl-skill">
+                            <span class="fl-skill-name">Three.js</span>
+                            <div class="fl-skill-track"><div class="fl-skill-fill" style="width:78%"></div></div>
+                            <span class="fl-skill-pct">78%</span>
+                        </div>
+                        <div class="fl-skill">
+                            <span class="fl-skill-name">React</span>
+                            <div class="fl-skill-track"><div class="fl-skill-fill" style="width:88%"></div></div>
+                            <span class="fl-skill-pct">88%</span>
+                        </div>
+                        <div class="fl-skill">
+                            <span class="fl-skill-name">Node.js</span>
+                            <div class="fl-skill-track"><div class="fl-skill-fill" style="width:72%"></div></div>
+                            <span class="fl-skill-pct">72%</span>
+                        </div>
+                        <div class="fl-hint"><i class="fas fa-rotate"></i>&ensp;Tap to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== CARD 3: MESH GRADIENT + DOT PATTERN BACKGROUND + ELASTIC ====== -->
+            <div class="card-elastic" id="elasticCard" role="button" tabindex="0"
+                 aria-label="Elastic morph animation card, click to trigger">
+                <div class="el-dots"></div>
+                <div class="el-mesh-shift"></div>
+                <svg class="el-border-svg" viewBox="0 0 360 370" preserveAspectRatio="none">
+                    <rect x="1" y="1" width="358" height="368"></rect>
+                </svg>
+                <div class="el-glow"></div>
+                <span class="badge badge-3">Elastic Morph</span>
+                <div class="el-content" id="elContent">
+                    <div class="el-icon"><i class="fas fa-chart-line"></i></div>
+                    <div>
+                        <div class="el-title" id="elTitle">Weekly Analytics</div>
+                        <div class="el-subtitle" id="elSub">Performance overview for this week</div>
+                    </div>
+                    <div class="el-grid" id="elGrid">
+                        <div class="el-stat-card">
+                            <div class="el-stat-val" id="elV0">12.4K</div>
+                            <div class="el-stat-name" id="elN0">Views</div>
+                        </div>
+                        <div class="el-stat-card">
+                            <div class="el-stat-val" id="elV1">892</div>
+                            <div class="el-stat-name" id="elN1">Likes</div>
+                        </div>
+                        <div class="el-stat-card">
+                            <div class="el-stat-val" id="elV2">234</div>
+                            <div class="el-stat-name" id="elN2">Shares</div>
+                        </div>
+                        <div class="el-stat-card">
+                            <div class="el-stat-val" id="elV3">67</div>
+                            <div class="el-stat-name" id="elN3">Comments</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <div class="touch-hint">
+            <i class="fas fa-hand-pointer"></i>
+            <span>Tap or click any card to trigger its animation</span>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        /* ===========================================
+           JS Function 1: triggerRipple(card, event)
+           ------------------------------------------------
+           Touch point lo 3 expanding ripple circles
+           create chestundi, card lift avutundi,
+           content fade out/in ayi track switch avutundi.
+        =========================================== */
+        function triggerRipple(card, event) {
+            var rect = card.getBoundingClientRect();
+            var clientX = event.clientX !== undefined ? event.clientX
+                        : (event.touches && event.touches[0] ? event.touches[0].clientX : rect.left + rect.width / 2);
+            var clientY = event.clientY !== undefined ? event.clientY
+                        : (event.touches && event.touches[0] ? event.touches[0].clientY : rect.top + rect.height / 2);
+            var x = clientX - rect.left;
+            var y = clientY - rect.top;
+
+            // 3 staggered ripple circles create cheyyadam
+            for (var i = 0; i < 3; i++) {
+                var circle = document.createElement('span');
+                circle.className = 'ripple-circle';
+                circle.style.left = x + 'px';
+                circle.style.top = y + 'px';
+                circle.style.width = '120px';
+                circle.style.height = '120px';
+                circle.style.animationDelay = (i * 0.1) + 's';
+                card.appendChild(circle);
+
+                void circle.offsetWidth; // reflow force cheyyadam
+                circle.classList.add('go');
+
+                (function(el) {
+                    setTimeout(function() { el.remove(); }, 1000);
+                })(circle);
+            }
+
+            // Card ni lift cheyyadam
+            card.classList.add('ripple-active');
+
+            // Content fade out
+            var content = document.getElementById('rpContent');
+            content.classList.add('hide');
+
+            // Fade out ayyaka track data change cheyyadam
+            setTimeout(function() {
+                var isPlaying = document.getElementById('rpPlayIcon').classList.contains('fa-pause');
+
+                if (isPlaying) {
+                    document.getElementById('rpTitle').textContent = 'Solar Flare';
+                    document.getElementById('rpArtist').textContent = 'Nova Pulse';
+                    document.getElementById('rpFill').style.width = '32%';
+                    document.getElementById('rpCur').textContent = '1:08';
+                    document.getElementById('rpTotal').textContent = '3:22';
+                    document.getElementById('rpPlayIcon').classList.remove('fa-pause');
+                    document.getElementById('rpPlayIcon').classList.add('fa-play');
+                    showToast('Switched to: Solar Flare');
+                } else {
+                    document.getElementById('rpTitle').textContent = 'Midnight Dreams';
+                    document.getElementById('rpArtist').textContent = 'Luna Ray';
+                    document.getElementById('rpFill').style.width = '65%';
+                    document.getElementById('rpCur').textContent = '2:34';
+                    document.getElementById('rpTotal').textContent = '3:56';
+                    document.getElementById('rpPlayIcon').classList.remove('fa-play');
+                    document.getElementById('rpPlayIcon').classList.add('fa-pause');
+                    showToast('Now playing: Midnight Dreams');
+                }
+
+                content.classList.remove('hide');
+            }, 280);
+
+            setTimeout(function() {
+                card.classList.remove('ripple-active');
+            }, 900);
+        }
+
+
+        /* ===========================================
+           JS Function 2: triggerFlip(container)
+           ------------------------------------------------
+           Card ni 3D lo Y-axis mida flip chestundi,
+           back face lo skill bars animate avutayi
+           staggered delay tho.
+        =========================================== */
+        function triggerFlip(container) {
+            var flipper = document.getElementById('flipper');
+            var isFlipped = flipper.classList.contains('flipped');
+
+            flipper.classList.toggle('flipped');
+
+            if (!isFlipped) {
+                showToast('Flipped to Skills view');
+            } else {
+                showToast('Flipped back to Profile view');
+            }
+        }
+
+
+        /* ===========================================
+           JS Function 3: triggerElastic(card)
+           ------------------------------------------------
+           Jelly wobble animation trigger chestundi,
+           SVG border draw chestundi, radial glow
+           expand chestundi, stat cards spring physics
+           tho bounce avutayi. Two data sets toggle.
+        =========================================== */
+        function triggerElastic(card) {
+            var isActive = card.classList.contains('el-active');
+
+            if (isActive) {
+                // Deactivate
+                card.classList.remove('el-active');
+                setElasticData([
+                    { val: '12.4K', name: 'Views' },
+                    { val: '892',   name: 'Likes' },
+                    { val: '234',   name: 'Shares' },
+                    { val: '67',    name: 'Comments' }
+                ]);
+                document.getElementById('elTitle').textContent = 'Weekly Analytics';
+                document.getElementById('elSub').textContent = 'Performance overview for this week';
+                showToast('Analytics reset');
+            } else {
+                // Jelly wobble trigger (class remove/add tho re-trigger)
+                card.classList.remove('el-wobble');
+                void card.offsetWidth;
+                card.classList.add('el-wobble');
+
+                // Glow + border + stats activate
+                card.classList.add('el-active');
+
+                setElasticData([
+                    { val: '$4.2K',  name: 'Revenue' },
+                    { val: '1.8K',   name: 'Users' },
+                    { val: '+24%',   name: 'Growth' },
+                    { val: '87%',    name: 'Retain' }
+                ]);
+                document.getElementById('elTitle').textContent = 'Revenue Breakdown';
+                document.getElementById('elSub').textContent = 'Monetization metrics at a glance';
+                showToast('Showing Revenue data');
+
+                setTimeout(function() {
+                    card.classList.remove('el-wobble');
+                }, 700);
+            }
+        }
+
+        // Elastic card data set helper function
+        function setElasticData(data) {
+            for (var i = 0; i < 4; i++) {
+                document.getElementById('elV' + i).textContent = data[i].val;
+                document.getElementById('elN' + i).textContent = data[i].name;
+            }
+        }
+
+
+        /* ===========================================
+           Toast notification system
+        =========================================== */
+        var toastTimer = null;
+        function showToast(message) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            if (toastTimer) clearTimeout(toastTimer);
+            toast.classList.add('show');
+            toastTimer = setTimeout(function() {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+
+        /* ===========================================
+           Event Listeners — click + keyboard support
+        =========================================== */
+        var rippleCard = document.getElementById('rippleCard');
+        var flipCard = document.getElementById('flipCard');
+        var elasticCard = document.getElementById('elasticCard');
+
+        // Click events
+        rippleCard.addEventListener('click', function(e) {
+            triggerRipple(this, e);
+        });
+        flipCard.addEventListener('click', function(e) {
+            triggerFlip(this);
+        });
+        elasticCard.addEventListener('click', function(e) {
+            triggerElastic(this);
+        });
+
+        // Keyboard accessibility (Enter/Space)
+        rippleCard.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                triggerRipple(this, e);
+            }
+        });
+        flipCard.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                triggerFlip(this);
+            }
+        });
+        elasticCard.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                triggerElastic(this);
+            }
+        });
+    </script>
+
+</body>
+</html>

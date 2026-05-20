@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - NIT Hyderabad</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f8f9fa;color:#212529;line-height:1.6}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:600}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#f1f1f1}::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:4px}
+.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 5px 15px rgba(0,0,0,.1);position:relative;overflow:hidden;transition:.3s}
+.stat-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.stat-card.blue::before{background:#00b4d8}.stat-card.green::before{background:#28a745}.stat-card.yellow::before{background:#ffc107}.stat-card.red::before{background:#dc3545}
+.dashboard-sidebar{background:#1e3a5f;color:#fff;height:100vh;width:250px;position:fixed;left:0;top:0;z-index:1001;transition:.3s;overflow-y:auto}
+.sidebar-link{display:flex;align-items:center;padding:12px 20px;color:rgba(255,255,255,.8);text-decoration:none;transition:.3s;border-left:3px solid transparent;cursor:pointer}
+.sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#f0a500}
+.sidebar-link i{margin-right:15px;font-size:18px;width:20px;text-align:center}
+.dashboard-content{margin-left:250px;padding:20px;transition:.3s}
+.dashboard-header{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.1);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-radius:8px}
+.custom-card{background:#fff;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,.1);transition:.3s;overflow:hidden}
+.custom-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.btn-primary{background:#1e3a5f;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;transition:.3s;font-weight:500}
+.btn-primary:hover{background:#0f2744;transform:translateY(-2px);box-shadow:0 5px 15px rgba(30,58,95,.3);color:#fff}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.badge-success{background:rgba(40,167,69,.1);color:#28a745}.badge-danger{background:rgba(220,53,69,.1);color:#dc3545}.badge-warning{background:rgba(255,193,7,.1);color:#856404}.badge-info{background:rgba(0,180,216,.1);color:#00b4d8}
+.custom-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.1)}
+.custom-table th,.custom-table td{padding:12px 15px;text-align:left;vertical-align:middle}
+.custom-table th{background:#1e3a5f;color:#fff;font-weight:500}
+.custom-table tr{border-bottom:1px solid #eee}.custom-table tr:last-child{border-bottom:none}
+.custom-table tr:hover{background:rgba(0,180,216,.05)}
+.login-container{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e3a5f,#00b4d8);padding:20px}
+.login-card{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:450px;width:100%;overflow:hidden}
+.login-header{background:linear-gradient(135deg,#1e3a5f,#00b4d8);padding:30px;text-align:center;color:#fff}
+.login-body{padding:30px}
+@media(max-width:992px){.dashboard-sidebar{left:-250px}.dashboard-sidebar.mobile-open{left:0}.dashboard-content{margin-left:0}}
+/* Scan modal */
+.scan-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center}
+.scan-modal.open{display:flex}
+.scan-box{background:#fff;border-radius:20px;padding:40px;text-align:center;max-width:420px;width:90%}
+.scan-ring{width:150px;height:150px;border-radius:50%;border:4px solid #1e3a5f;margin:20px auto;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.scan-ring::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#00b4d8,transparent);animation:scanLine 1.5s linear infinite}
+@keyframes scanLine{0%{top:0}100%{top:100%}}
+.scan-ring.success{border-color:#28a745}
+.stu-thumb{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.tc-thumb{width:40px;height:40px;border-radius:50%;object-fit:cover}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="w-20 h-20 rounded-full bg-white bg-opacity-20 flex items-center justify-center mx-auto mb-4"><i class="fas fa-user-shield text-3xl"></i></div>
+      <h2 class="text-2xl font-bold">Admin Panel</h2>
+      <p>National Institute of Technology</p>
+    </div>
+    <div class="login-body">
+      <div class="ui form">
+        <div class="field"><label>Username</label><div class="ui left icon input"><i class="user icon"></i><input type="text" id="aUser" placeholder="Enter username"></div></div>
+        <div class="field"><label>Password</label><div class="ui left icon input"><i class="lock icon"></i><input type="password" id="aPass" placeholder="Enter password"></div></div>
+        <button class="btn-primary w-full py-3 text-lg" onclick="adminLogin()">Login</button>
+        <div class="ui message mt-4"><div class="header">Admin Credentials</div><p>Username: admin &nbsp;|&nbsp; Password: admin123</p></div>
+        <div id="aErr" class="ui negative message" style="display:none"><p>Invalid credentials.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashPage" style="display:none">
+  <div class="dashboard-sidebar" id="aSidebar">
+    <div class="p-4 border-b border-white border-opacity-10"><div class="flex items-center"><div class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center mr-3"><i class="fas fa-user-shield text-white"></i></div><div><h3 class="text-white font-bold">Admin Panel</h3><p class="text-blue-200 text-xs">NIT Hyderabad</p></div></div></div>
+    <nav class="mt-4">
+      <a class="sidebar-link active" onclick="showSect('dashboard',this)"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+      <a class="sidebar-link" onclick="showSect('students',this)"><i class="fas fa-user-graduate"></i><span>Students</span></a>
+      <a class="sidebar-link" onclick="showSect('teachers',this)"><i class="fas fa-chalkboard-teacher"></i><span>Teachers</span></a>
+      <a class="sidebar-link" onclick="showSect('attendance',this)"><i class="fas fa-calendar-check"></i><span>Attendance</span></a>
+      <a class="sidebar-link" onclick="showSect('news',this)"><i class="fas fa-newspaper"></i><span>News & Events</span></a>
+      <a class="sidebar-link" onclick="viewWebsite()"><i class="fas fa-globe"></i><span>View Website</span></a>
+      <a class="sidebar-link" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+    </nav>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="dashboard-header">
+      <div class="flex items-center"><button class="mr-4 text-gray-600 md:hidden" onclick="document.getElementById('aSidebar').classList.toggle('mobile-open')"><i class="fas fa-bars text-xl"></i></button><h2 class="text-xl font-bold" id="dTitle">Dashboard</h2></div>
+      <div class="flex items-center"><div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2"><i class="fas fa-user-shield text-blue-600 text-sm"></i></div><span class="hidden md:inline font-medium">Admin</span></div>
+    </div>
+
+    <!-- ===== DASHBOARD SECTION ===== -->
+    <div id="sec-dashboard" class="a-sect">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card blue"><div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Total Students</p><h3 class="text-2xl font-bold mt-1" id="stTotal">0</h3></div><div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"><i class="fas fa-user-graduate text-blue-600"></i></div></div></div>
+        <div class="stat-card green"><div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Total Teachers</p><h3 class="text-2xl font-bold mt-1" id="tcTotal">0</h3></div><div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center"><i class="fas fa-chalkboard-teacher text-green-600"></i></div></div></div>
+        <div class="stat-card yellow"><div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Departments</p><h3 class="text-2xl font-bold mt-1">5</h3></div><div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center"><i class="fas fa-building text-yellow-600"></i></div></div></div>
+        <div class="stat-card red"><div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Avg Attendance</p><h3 class="text-2xl font-bold mt-1" id="avgAtt">0%</h3></div><div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center"><i class="fas fa-percentage text-red-600"></i></div></div></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="custom-card p-6"><h3 class="text-xl font-bold mb-4">Students by Department</h3><div class="space-y-4" id="branchBars"></div></div>
+        <div class="custom-card p-6"><h3 class="text-xl font-bold mb-4">Quick Info</h3><div class="space-y-3"><div class="flex justify-between p-3 bg-gray-100 rounded-lg"><span>AINML</span><span class="badge badge-info" id="bAINML">0</span></div><div class="flex justify-between p-3 bg-gray-100 rounded-lg"><span>CSE</span><span class="badge badge-info" id="bCSE">0</span></div><div class="flex justify-between p-3 bg-gray-100 rounded-lg"><span>ECE</span><span class="badge badge-info" id="bECE">0</span></div><div class="flex justify-between p-3 bg-gray-100 rounded-lg"><span>EEE</span><span class="badge badge-info" id="bEEE">0</span></div><div class="flex justify-between p-3 bg-gray-100 rounded-lg"><span>MECHANICAL</span><span class="badge badge-info" id="bMECH">0</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- ===== STUDENTS SECTION ===== -->
+    <div id="sec-students" class="a-sect" style="display:none">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+          <div class="ui icon input"><input type="text" placeholder="Search..." id="stSearch" oninput="renderStudents()"><i class="search icon"></i></div>
+          <select class="ui dropdown" id="stBranch" onchange="renderStudents()"><option value="">All Branches</option><option>AINML</option><option>CSE</option><option>ECE</option><option>EEE</option><option>MECHANICAL</option></select>
+          <select class="ui dropdown" id="stSem" onchange="renderStudents()"><option value="">All Sem</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>
+        </div>
+        <button class="btn-primary" onclick="openAddStu()"><i class="fas fa-plus mr-2"></i>Add Student</button>
+      </div>
+      <div class="overflow-x-auto"><table class="custom-table"><thead><tr><th>Photo</th><th>Name</th><th>Roll No</th><th>Branch</th><th>Sem</th><th>%</th><th>Att%</th><th>Email</th><th>Password</th><th>Actions</th></tr></thead><tbody id="stBody"></tbody></table></div>
+      <div class="mt-4 flex justify-between items-center"><span class="text-gray-600" id="stInfo"></span><div class="flex space-x-2"><button class="btn-primary" onclick="chPage(-1)" id="prevB" disabled>Prev</button><button class="btn-primary" onclick="chPage(1)" id="nextB">Next</button></div></div>
+    </div>
+
+    <!-- ===== TEACHERS SECTION ===== -->
+    <div id="sec-teachers" class="a-sect" style="display:none">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div class="ui icon input w-full md:w-auto"><input type="text" placeholder="Search..." id="tcSearch" oninput="renderTeachers()"><i class="search icon"></i></div>
+        <button class="btn-primary" onclick="openAddTc()"><i class="fas fa-plus mr-2"></i>Add Teacher</button>
+      </div>
+      <div class="overflow-x-auto"><table class="custom-table"><thead><tr><th>Photo</th><th>Name</th><th>ID</th><th>Dept</th><th>Subject</th><th>Exp</th><th>Email</th><th>Mobile</th><th>Actions</th></tr></thead><tbody id="tcBody"></tbody></table></div>
+    </div>
+
+    <!-- ===== ATTENDANCE SECTION ===== -->
+    <div id="sec-attendance" class="a-sect" style="display:none">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+        <div class="custom-card p-6"><h3 class="text-lg font-bold mb-4">Date</h3><input type="date" class="ui input w-full" id="attDate"></div>
+        <div class="custom-card p-6"><h3 class="text-lg font-bold mb-4">Branch</h3><select class="ui dropdown w-full" id="attBranch" onchange="loadAttStu()"><option value="">Select</option><option>AINML</option><option>CSE</option><option>ECE</option><option>EEE</option><option>MECHANICAL</option></select></div>
+        <div class="custom-card p-6"><h3 class="text-lg font-bold mb-4">Semester</h3><select class="ui dropdown w-full" id="attSem" onchange="loadAttStu()"><option value="">Select</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></div>
+      </div>
+      <!-- SMART ATTENDANCE BUTTONS -->
+      <div class="custom-card p-6 mb-4">
+        <h3 class="text-lg font-bold mb-3">Smart Attendance</h3>
+        <p class="text-gray-500 text-sm mb-4">Use biometric methods to mark attendance automatically</p>
+        <div class="flex flex-wrap gap-3">
+          <button class="btn-primary" onclick="openBiometricScan('fingerprint')"><i class="fas fa-fingerprint mr-2"></i>Fingerprint Scan</button>
+          <button class="btn-primary" onclick="openBiometricScan('face')" style="background:#0f6e56"><i class="fas fa-camera mr-2"></i>Face Recognition</button>
+          <button class="btn-primary" onclick="markAllPresent()" style="background:#28a745"><i class="fas fa-check-double mr-2"></i>Mark All Present</button>
+          <button class="btn-primary" onclick="saveAtt()" style="background:#f0a500"><i class="fas fa-save mr-2"></i>Save Attendance</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="custom-table" id="attTable" style="display:none"><thead><tr><th>Photo</th><th>Roll No</th><th>Name</th><th>Branch</th><th>Status</th></tr></thead><tbody id="attBody"></tbody></table>
+        <div id="attPlace" class="custom-card p-8 text-center"><i class="fas fa-calendar-alt text-gray-300 text-5xl mb-4"></i><p class="text-gray-500">Select date, branch and semester to mark attendance</p></div>
+      </div>
+    </div>
+
+    <!-- ===== NEWS SECTION ===== -->
+    <div id="sec-news" class="a-sect" style="display:none">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold">News & Events (Visible on Website)</h3>
+        <button class="btn-primary" onclick="openAddNews()"><i class="fas fa-plus mr-2"></i>Add News</button>
+      </div>
+      <div id="newsList" class="space-y-4"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD STUDENT MODAL -->
+<div class="ui modal" id="addStuModal">
+  <div class="header">Add New Student</div>
+  <div class="content">
+    <form class="ui form" id="addStuForm">
+      <div class="two fields"><div class="field"><label>Name *</label><input type="text" name="name" required></div><div class="field"><label>Roll Number *</label><input type="text" name="rollNumber" required></div></div>
+      <div class="two fields"><div class="field"><label>Branch *</label><select name="branch" class="ui dropdown" required><option value="">Select</option><option>AINML</option><option>CSE</option><option>ECE</option><option>EEE</option><option>MECHANICAL</option></select></div><div class="field"><label>Semester *</label><select name="semester" class="ui dropdown" required><option value="">Select</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></div></div>
+      <div class="two fields"><div class="field"><label>Percentage *</label><input type="number" name="percentage" min="0" max="100" step="0.1" required></div><div class="field"><label>Attendance % *</label><input type="number" name="attendance" min="0" max="100" step="0.1" required></div></div>
+      <div class="two fields"><div class="field"><label>Phone *</label><input type="text" name="phone" required></div><div class="field"><label>Email * (Login)</label><input type="email" name="email" required></div></div>
+      <div class="field"><label>Password *</label><input type="text" name="password" value="student123" required></div>
+      <div class="field"><label>Skills (comma separated)</label><input type="text" name="skills" placeholder="Python, Java, C++"></div>
+    </form>
+  </div>
+  <div class="actions"><div class="ui black deny button">Cancel</div><div class="ui positive button" onclick="addStudent()">Add Student</div></div>
+</div>
+
+<!-- ADD TEACHER MODAL -->
+<div class="ui modal" id="addTcModal">
+  <div class="header">Add New Teacher</div>
+  <div class="content">
+    <form class="ui form" id="addTcForm">
+      <div class="two fields"><div class="field"><label>Name *</label><input type="text" name="name" required></div><div class="field"><label>Teacher ID *</label><input type="text" name="teacherId" required></div></div>
+      <div class="two fields"><div class="field"><label>Qualification *</label><input type="text" name="qualification" required></div><div class="field"><label>Department *</label><select name="department" class="ui dropdown" required><option value="">Select</option><option>AINML</option><option>CSE</option><option>ECE</option><option>EEE</option><option>MECHANICAL</option></select></div></div>
+      <div class="two fields"><div class="field"><label>Subject *</label><input type="text" name="subject" required></div><div class="field"><label>Experience (yrs) *</label><input type="number" name="experience" required></div></div>
+      <div class="two fields"><div class="field"><label>Email *</label><input type="email" name="email" required></div><div class="field"><label>Mobile *</label><input type="text" name="mobile" required></div></div>
+    </form>
+  </div>
+  <div class="actions"><div class="ui black deny button">Cancel</div><div class="ui positive button" onclick="addTeacher()">Add Teacher</div></div>
+</div>
+
+<!-- ADD NEWS MODAL - Custom (Semantic UI form conflict fix) -->
+<div id="addNewsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:14px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden">
+    <div style="background:#1e3a5f;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center">
+      <h3 style="font-size:1.1rem;font-weight:600;margin:0">📰 Add News / Event</h3>
+      <button onclick="closeNewsModal()" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer;line-height:1">&times;</button>
+    </div>
+    <div style="padding:24px">
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-weight:500;margin-bottom:6px;font-size:14px">Title <span style="color:red">*</span></label>
+        <input type="text" id="newsTitle" placeholder="e.g. Placement Drive 2024" style="width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div>
+          <label style="display:block;font-weight:500;margin-bottom:6px;font-size:14px">Date</label>
+          <input type="text" id="newsDate" placeholder="e.g. July 1, 2024" style="width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none">
+        </div>
+        <div>
+          <label style="display:block;font-weight:500;margin-bottom:6px;font-size:14px">Category</label>
+          <select id="newsColor" style="width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none">
+            <option value="blue">📰 News (Blue)</option>
+            <option value="green">🏆 Achievement (Green)</option>
+            <option value="yellow">📅 Event (Yellow)</option>
+            <option value="red">🚨 Notice (Red)</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-weight:500;margin-bottom:6px;font-size:14px">Short Description <span style="color:red">*</span></label>
+        <input type="text" id="newsShort" placeholder="Brief summary shown on homepage" style="width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none">
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-weight:500;margin-bottom:6px;font-size:14px">Full Details <span style="color:red">*</span></label>
+        <textarea id="newsFull" rows="4" placeholder="Full news content shown when user clicks Read More..." style="width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;resize:vertical"></textarea>
+      </div>
+      <div id="newsErr" style="display:none;background:#fff3cd;border:1px solid #ffc107;color:#856404;padding:8px 12px;border-radius:6px;font-size:13px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="closeNewsModal()" style="padding:9px 20px;background:#6c757d;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:500">Cancel</button>
+        <button onclick="addNews()" style="padding:9px 24px;background:#28a745;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:500"><i class="fas fa-paper-plane mr-1"></i> Publish to Website</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="ui modal" id="viewModal"><div class="header" id="vTitle">Details</div><div class="content" id="vBody"></div><div class="actions"><div class="ui positive button" onclick="$('#viewModal').modal('hide')">Close</div></div></div>
+
+<!-- BIOMETRIC SCAN MODAL -->
+<div class="scan-modal" id="scanModal">
+  <div class="scan-box">
+    <h3 class="text-xl font-bold mb-2" id="scanTitle">Fingerprint Scan</h3>
+    <p class="text-gray-500 mb-4" id="scanSubtitle">Place your finger on the scanner</p>
+    <div class="scan-ring" id="scanRing">
+      <i class="fas fa-fingerprint text-6xl text-blue-700" id="scanIcon"></i>
+    </div>
+    <div id="scanStatus" class="text-gray-500 mt-4 text-sm font-medium">Ready to scan...</div>
+    <div id="scanResult" class="mt-3 hidden"></div>
+    <div class="mt-6 flex gap-3 justify-center">
+      <button class="btn-primary" onclick="simulateBiometric()"><i class="fas fa-wifi mr-2"></i>Simulate Scan</button>
+      <button onclick="closeScanModal()" style="background:#6c757d;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toastEl" style="position:fixed;top:20px;right:20px;z-index:9999;display:none"><div class="ui positive message" style="min-width:300px"><i class="close icon" onclick="$('#toastEl').hide()"></i><div class="header" id="toastMsg">Success</div></div></div>
+
+<script>
+// ======= PHOTO POOLS =======
+const STUDENT_PHOTOS_M=['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80','https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80','https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&q=80','https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&q=80','https://images.unsplash.com/photo-1552058544-f2b08422138a?w=150&q=80','https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&q=80','https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&q=80','https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=150&q=80','https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&q=80','https://images.unsplash.com/photo-1542178243-bc20204b769f?w=150&q=80','https://images.unsplash.com/photo-1548449112-96a38a643324?w=150&q=80','https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=150&q=80'];
+const STUDENT_PHOTOS_F=['https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80','https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80','https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80','https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80','https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80','https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&q=80','https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&q=80','https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&q=80'];
+const TEACHER_PHOTOS={'Dr. Ananya Sharma':'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80','Dr. Rahul Verma':'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&q=80','Dr. Priya Patel':'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80','Dr. Vikram Singh':'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80','Dr. Meera Gupta':'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80','Dr. Arjun Reddy':'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80','Dr. Suresh Babu':'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&q=80','Dr. Kavitha Raman':'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80','Dr. Rajesh Nair':'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=150&q=80','Dr. Mohan Krishna':'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=150&q=80','Dr. Lakshmi Devi':'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80','Dr. Srinivas Rao':'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&q=80','Dr. Rajesh Kumar':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&q=80','Dr. Sunita Sharma':'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80','Dr. Anil Patel':'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&q=80'};
+const FEMALE_NAMES=['Ananya','Diya','Myra','Sara','Aadhya','Kiara','Riya','Priya','Pooja','Neha','Divya','Lakshmi','Kavitha','Meera','Swathi','Priyanka','Anjali','Deepika','Shruti','Devi','Eswari','Fatima','Geetha','Hema','Indira','Jayanthi','Kamala','Lalitha','Madhuri','Nirmala','Padma','Revathi','Sujatha','Uma','Vasundhara','Yamini','Zara'];
+function getStuPhoto(name,id){const fn=name.split(' ')[0];const isF=FEMALE_NAMES.some(n=>n.toLowerCase()===fn.toLowerCase());const pool=isF?STUDENT_PHOTOS_F:STUDENT_PHOTOS_M;return pool[id%pool.length];}
+function getTcPhoto(name){return TEACHER_PHOTOS[name]||STUDENT_PHOTOS_M[0];}
+
+// ======= DB =======
+function getStudents(){return JSON.parse(localStorage.getItem('nit_students')||'[]')}
+function setStudents(d){localStorage.setItem('nit_students',JSON.stringify(d))}
+function getTeachers(){return JSON.parse(localStorage.getItem('nit_teachers')||'[]')}
+function setTeachers(d){localStorage.setItem('nit_teachers',JSON.stringify(d))}
+function getAttendance(){return JSON.parse(localStorage.getItem('nit_attendance')||'{}')}
+function setAttendance(d){localStorage.setItem('nit_attendance',JSON.stringify(d))}
+function getNews(){return JSON.parse(localStorage.getItem('nit_news')||'[]')}
+function setNews(d){localStorage.setItem('nit_news',JSON.stringify(d))}
+function toast(m,type='positive'){document.getElementById('toastMsg').textContent=m;const el=document.querySelector('#toastEl .ui.message');el.className='ui message '+(type==='error'?'negative':'positive');$('#toastEl').show();setTimeout(()=>$('#toastEl').hide(),3500)}
+
+// ======= INIT =======
+function initData(){
+  // Force refresh if old data has no photos stored (version check)
+  const ver = localStorage.getItem('nit_version');
+  if(ver !== 'v3_photos'){
+    localStorage.removeItem('nit_students');
+    localStorage.removeItem('nit_teachers');
+    localStorage.removeItem('nit_attendance');
+    localStorage.setItem('nit_version','v3_photos');
+  }
+  if(getStudents().length>0)return;
+  const branches=['AINML','CSE','ECE','EEE','MECHANICAL'];
+  const fn=['Aarav','Vivaan','Aditya','Vihaan','Arjun','Sai','Reyansh','Krishna','Ishaan','Shaurya','Ananya','Diya','Myra','Sara','Aadhya','Kiara','Riya','Priya','Pooja','Neha','Rahul','Amit','Rohit','Vikram','Raj','Suresh','Mahesh','Kiran','Naveen','Pradeep','Divya','Lakshmi','Kavitha','Meera','Swathi','Priyanka','Anjali','Deepika','Shruti','Ravi','Sunil','Ganesh','Karthik','Harsha','Nithin','Pavan','Sandeep','Manoj','Ramesh','Sridhar'];
+  const ln=['Sharma','Verma','Patel','Reddy','Kumar','Singh','Gupta','Rao','Nair','Joshi','Mehta','Desai','Iyer','Krishnan','Murthy','Pillai','Naidu','Choudhary','Mishra','Saxena'];
+  const sk={AINML:['Python','TensorFlow','PyTorch','ML','DL','NLP','CV','Data Science'],CSE:['C','C++','Java','Python','JavaScript','React','Node.js','SQL'],ECE:['MATLAB','VLSI','Verilog','Embedded C','PCB Design','DSP'],EEE:['MATLAB','PLC','SCADA','AutoCAD','Power Systems','Control Systems'],MECHANICAL:['AutoCAD','SolidWorks','ANSYS','MATLAB','CNC','Thermodynamics']};
+  const sb={AINML:['AI Fundamentals','ML','DL','NLP','CV','Reinforcement Learning'],CSE:['Data Structures','Algorithms','DBMS','OS','Networks','Software Engg'],ECE:['Electronic Devices','Circuits','Signals','Communication','DSP','VLSI'],EEE:['Electrical Circuits','Machines','Power Systems','Control','Power Electronics'],MECHANICAL:['Thermodynamics','SOM','Fluid Mechanics','Manufacturing','Kinematics']};
+  let students=[],id=1;
+  branches.forEach(br=>{
+    for(let i=0;i<50;i++){
+      const name=fn[Math.floor(Math.random()*fn.length)]+' '+ln[Math.floor(Math.random()*ln.length)];
+      const sem=Math.floor(Math.random()*8)+1;
+      const bc=br==='MECHANICAL'?'ME':br;
+      const roll=bc+String(sem).padStart(2,'0')+String(i+1).padStart(3,'0');
+      const email=(name.split(' ')[0].toLowerCase()+name.split(' ')[1].toLowerCase()+(i+1))+'@nithyderabad.edu';
+      const phone='+91 '+Math.floor(Math.random()*9+7)+String(Math.floor(Math.random()*100000000)).padStart(8,'0');
+      const skills=sk[br].sort(()=>0.5-Math.random()).slice(0,Math.floor(Math.random()*4)+2);
+      const subjects=sb[br].slice(0,Math.min(4+Math.floor(sem/2),sb[br].length));
+      students.push({id:id++,name,rollNumber:roll,branch:br,semester:sem,percentage:+(Math.random()*35+55).toFixed(1),attendance:+(Math.random()*30+65).toFixed(1),phone,email,password:'student123',skills,subjects});
+    }
+  });
+  setStudents(students);
+  // Default teachers
+  setTeachers([
+    {name:'Dr. Ananya Sharma',id:'T001',qual:'Ph.D. ML, IIT Delhi',dept:'AINML',sub:'Machine Learning',exp:15,email:'ananya@nit.edu',mob:'+91 9876543210'},
+    {name:'Dr. Rahul Verma',id:'T002',qual:'Ph.D. CV, IISc',dept:'AINML',sub:'Computer Vision',exp:12,email:'rahul@nit.edu',mob:'+91 9876543211'},
+    {name:'Dr. Priya Patel',id:'T003',qual:'Ph.D. NLP, IIIT',dept:'AINML',sub:'NLP',exp:8,email:'priya@nit.edu',mob:'+91 9876543212'},
+    {name:'Dr. Vikram Singh',id:'T004',qual:'Ph.D. IIT Bombay',dept:'CSE',sub:'OS',exp:18,email:'vikram@nit.edu',mob:'+91 9876543213'},
+    {name:'Dr. Meera Gupta',id:'T005',qual:'Ph.D. NIT Trichy',dept:'CSE',sub:'Cybersecurity',exp:14,email:'meera@nit.edu',mob:'+91 9876543214'},
+    {name:'Dr. Arjun Reddy',id:'T006',qual:'Ph.D. JNTUH',dept:'CSE',sub:'Cloud Computing',exp:10,email:'arjun@nit.edu',mob:'+91 9876543215'},
+    {name:'Dr. Suresh Babu',id:'T007',qual:'Ph.D. VLSI, IIT Madras',dept:'ECE',sub:'VLSI Design',exp:20,email:'suresh@nit.edu',mob:'+91 9876543216'},
+    {name:'Dr. Kavitha Raman',id:'T008',qual:'Ph.D. DSP, NIT Calicut',dept:'ECE',sub:'DSP',exp:16,email:'kavitha@nit.edu',mob:'+91 9876543217'},
+    {name:'Dr. Rajesh Nair',id:'T009',qual:'Ph.D. Embedded, BITS',dept:'ECE',sub:'Embedded Systems',exp:9,email:'rajesh@nit.edu',mob:'+91 9876543218'},
+    {name:'Dr. Mohan Krishna',id:'T010',qual:'Ph.D. IIT Kharagpur',dept:'EEE',sub:'Power Systems',exp:22,email:'mohan@nit.edu',mob:'+91 9876543219'},
+    {name:'Dr. Lakshmi Devi',id:'T011',qual:'Ph.D. NIT Warangal',dept:'EEE',sub:'Control Systems',exp:13,email:'lakshmi@nit.edu',mob:'+91 9876543220'},
+    {name:'Dr. Srinivas Rao',id:'T012',qual:'Ph.D. JNTUK',dept:'EEE',sub:'Renewable Energy',exp:7,email:'srinivas@nit.edu',mob:'+91 9876543221'},
+    {name:'Dr. Rajesh Kumar',id:'T013',qual:'Ph.D. IIT Kanpur',dept:'MECHANICAL',sub:'Thermodynamics',exp:19,email:'rajeshk@nit.edu',mob:'+91 9876543222'},
+    {name:'Dr. Sunita Sharma',id:'T014',qual:'Ph.D. NIT Rourkela',dept:'MECHANICAL',sub:'Manufacturing',exp:11,email:'sunita@nit.edu',mob:'+91 9876543223'},
+    {name:'Dr. Anil Patel',id:'T015',qual:'Ph.D. BITS',dept:'MECHANICAL',sub:'Machine Design',exp:6,email:'anil@nit.edu',mob:'+91 9876543224'}
+  ]);
+  // Default news
+  setNews([
+    {id:1,title:'Placement Drive 2024',date:'June 15, 2024',icon:'fas fa-newspaper',color:'blue',short:'Top companies like Google, Microsoft, Amazon visiting campus. Register by June 20.',full:'Top companies including Google, Microsoft, and Amazon are visiting campus for 2024 placement season. All eligible students from 7th and 8th semester must register through the placement portal by June 20, 2024.'},
+    {id:2,title:'TechFest 2024 Winners',date:'June 10, 2024',icon:'fas fa-trophy',color:'green',short:'Students secured 1st in National Robotics Competition and 2nd in Hackathon.',full:'Our students brought laurels to the institute by securing first place in the National Robotics Competition at IIT Delhi and second place in the 48-hour National Hackathon.'},
+    {id:3,title:'International Conference on AI',date:'June 5, 2024',icon:'fas fa-calendar-alt',color:'yellow',short:'CSE Dept organizing International Conference on AI from July 10-12.',full:'The Department of CSE is organizing a 3-day International Conference on Advances in AI and ML from July 10-12, 2024. Paper submissions open until June 30.'}
+  ]);
+  // Attendance
+  const students2=getStudents();
+  let att={};
+  students2.forEach(s=>{
+    for(let d=1;d<=28;d++){const ds='2024-06-'+String(d).padStart(2,'0');if(new Date(ds).getDay()===0)return;if(!att[ds])att[ds]={};att[ds][s.rollNumber]=Math.random()>0.15?'present':'absent';}
+  });
+  setAttendance(att);
+}
+
+// ======= ADMIN LOGIN =======
+function adminLogin(){
+  const u=document.getElementById('aUser').value,p=document.getElementById('aPass').value;
+  if(u==='admin'&&p==='admin123'){document.getElementById('aErr').style.display='none';document.getElementById('loginPage').style.display='none';document.getElementById('dashPage').style.display='block';updateDash();}
+  else{document.getElementById('aErr').style.display='block';}
+}
+function adminLogout(){document.getElementById('dashPage').style.display='none';document.getElementById('loginPage').style.display='flex';}
+
+// ======= NAVIGATION =======
+function showSect(sec,btn){
+  document.querySelectorAll('.a-sect').forEach(s=>s.style.display='none');
+  document.getElementById('sec-'+sec).style.display='block';
+  document.getElementById('dTitle').textContent=sec.charAt(0).toUpperCase()+sec.slice(1);
+  document.querySelectorAll('#aSidebar .sidebar-link').forEach(l=>l.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('aSidebar').classList.remove('mobile-open');
+  if(sec==='students'){pg=1;renderStudents();}
+  if(sec==='teachers')renderTeachers();
+  if(sec==='news')renderNews();
+}
+
+// ======= DASHBOARD =======
+function updateDash(){
+  const s=getStudents(),t=getTeachers();
+  document.getElementById('stTotal').textContent=s.length;
+  document.getElementById('tcTotal').textContent=t.length;
+  document.getElementById('avgAtt').textContent=s.length?(s.reduce((a,x)=>a+x.attendance,0)/s.length).toFixed(1)+'%':'0%';
+  const brs={AINML:0,CSE:0,ECE:0,EEE:0,MECHANICAL:0};
+  s.forEach(x=>{if(brs[x.branch]!==undefined)brs[x.branch]++;});
+  document.getElementById('bAINML').textContent=brs.AINML;
+  document.getElementById('bCSE').textContent=brs.CSE;
+  document.getElementById('bECE').textContent=brs.ECE;
+  document.getElementById('bEEE').textContent=brs.EEE;
+  document.getElementById('bMECH').textContent=brs.MECHANICAL;
+  const colors={AINML:'#00b4d8',CSE:'#28a745',ECE:'#ffc107',EEE:'#dc3545',MECHANICAL:'#6f42c1'};
+  let barsH='';
+  Object.keys(brs).forEach(b=>{const pct=s.length?((brs[b]/s.length)*100).toFixed(0):0;barsH+='<div><div class="flex justify-between mb-1"><span class="text-gray-600">'+b+'</span><span class="text-gray-600">'+brs[b]+'</span></div><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="h-2.5 rounded-full" style="width:'+pct+'%;background:'+colors[b]+'"></div></div></div>';});
+  document.getElementById('branchBars').innerHTML=barsH;
+}
+
+// ======= STUDENT TABLE =======
+let pg=1;const pp=15;
+function filtered(){
+  const q=(document.getElementById('stSearch').value||'').toLowerCase();
+  const br=document.getElementById('stBranch').value;
+  const sm=document.getElementById('stSem').value;
+  return getStudents().filter(s=>{
+    if(q&&!s.name.toLowerCase().includes(q)&&!s.rollNumber.toLowerCase().includes(q)&&!s.email.toLowerCase().includes(q))return false;
+    if(br&&s.branch!==br)return false;
+    if(sm&&s.semester!==+sm)return false;
+    return true;
+  });
+}
+
+function renderStudents(){
+  const f=filtered(),tp=Math.ceil(f.length/pp)||1;
+  if(pg>tp)pg=tp;
+  const st=(pg-1)*pp,ps=f.slice(st,st+pp);
+  let h='';
+  ps.forEach(s=>{
+    const photo=getStuPhoto(s.name,s.id);
+    const ac=s.attendance>=75?'badge-success':s.attendance>=60?'badge-warning':'badge-danger';
+    h+=`<tr>
+      <td><img src="${photo}" class="stu-thumb" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}&size=40'"></td>
+      <td class="font-medium">${s.name}</td>
+      <td>${s.rollNumber}</td>
+      <td><span class="badge badge-info">${s.branch}</span></td>
+      <td>${s.semester}</td>
+      <td>${s.percentage}%</td>
+      <td><span class="badge ${ac}">${s.attendance}%</span></td>
+      <td class="text-sm">${s.email}</td>
+      <td class="text-sm font-mono">${s.password}</td>
+      <td>
+        <button class="btn-primary text-xs px-2 py-1 mr-1" onclick="viewStu(${s.id})"><i class="fas fa-eye"></i></button>
+        <button class="btn-primary text-xs px-2 py-1 mr-1" onclick="editStu(${s.id})"><i class="fas fa-edit"></i></button>
+        <button class="text-xs px-2 py-1 text-white rounded" style="background:#dc3545" onclick="delStu(${s.id})"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`;
+  });
+  document.getElementById('stBody').innerHTML=h;
+  document.getElementById('stInfo').textContent='Showing '+(st+1)+'-'+Math.min(st+pp,f.length)+' of '+f.length;
+  document.getElementById('prevB').disabled=pg<=1;
+  document.getElementById('nextB').disabled=pg>=tp;
+}
+function chPage(d){pg+=d;renderStudents();}
+
+function viewStu(id){
+  const s=getStudents().find(x=>x.id===id);if(!s)return;
+  const photo=getStuPhoto(s.name,s.id);
+  document.getElementById('vTitle').textContent='Student Profile';
+  document.getElementById('vBody').innerHTML=`
+    <div class="flex items-center mb-6">
+      <img src="${photo}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-right:20px" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}&size=80'">
+      <div><h3 class="text-xl font-bold">${s.name}</h3><p class="text-gray-500">${s.rollNumber} | ${s.branch} Sem ${s.semester}</p></div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div><p class="text-gray-500 text-sm">Email</p><p class="font-medium">${s.email}</p></div>
+      <div><p class="text-gray-500 text-sm">Phone</p><p class="font-medium">${s.phone}</p></div>
+      <div><p class="text-gray-500 text-sm">Percentage</p><p class="font-medium">${s.percentage}%</p></div>
+      <div><p class="text-gray-500 text-sm">Attendance</p><p class="font-medium">${s.attendance}%</p></div>
+      <div><p class="text-gray-500 text-sm">Password</p><p class="font-medium font-mono">${s.password}</p></div>
+      <div><p class="text-gray-500 text-sm">Skills</p><p class="font-medium">${(s.skills||[]).join(', ')}</p></div>
+    </div>
+    <div class="mt-4 p-3 bg-yellow-50 rounded-lg"><p class="text-sm text-yellow-800"><i class="fas fa-info-circle mr-1"></i>Login: <strong>${s.email}</strong> / <strong>${s.password}</strong></p></div>`;
+  $('#viewModal').modal('show');
+}
+
+function editStu(id){
+  const all=getStudents();const idx=all.findIndex(x=>x.id===id);if(idx<0)return;const s=all[idx];
+  const p=prompt('Update Percentage (current: '+s.percentage+'%):', s.percentage);if(p===null)return;
+  const a=prompt('Update Attendance % (current: '+s.attendance+'%):', s.attendance);if(a===null)return;
+  const ph=prompt('Update Phone (current: '+s.phone+'):', s.phone);if(ph===null)return;
+  const pw=prompt('Update Password (current: '+s.password+'):', s.password);if(pw===null)return;
+  all[idx].percentage=parseFloat(p);all[idx].attendance=parseFloat(a);all[idx].phone=ph;all[idx].password=pw;
+  setStudents(all);renderStudents();updateDash();toast('Student updated! Changes visible in student portal.');
+}
+
+function delStu(id){
+  if(!confirm('Delete this student? They will no longer be able to login.'))return;
+  setStudents(getStudents().filter(s=>s.id!==id));renderStudents();updateDash();toast('Student deleted!');
+}
+
+function openAddStu(){document.getElementById('addStuForm').reset();document.querySelector('#addStuForm [name=password]').value='student123';$('#addStuModal').modal('show');}
+
+function addStudent(){
+  const fd=new FormData(document.getElementById('addStuForm'));
+  const all=getStudents();
+  const email=fd.get('email');
+  if(all.find(s=>s.email===email)){toast('Email already exists!','error');return;}
+  all.push({id:all.length>0?Math.max(...all.map(x=>x.id))+1:1,name:fd.get('name'),rollNumber:fd.get('rollNumber'),branch:fd.get('branch'),semester:+fd.get('semester'),percentage:+fd.get('percentage'),attendance:+fd.get('attendance'),phone:fd.get('phone'),email,password:fd.get('password'),skills:fd.get('skills')?fd.get('skills').split(',').map(s=>s.trim()):[],subjects:[]});
+  setStudents(all);$('#addStuModal').modal('hide');renderStudents();updateDash();toast('Student added! Login: '+email+' / '+fd.get('password'));
+}
+
+// ======= TEACHER TABLE =======
+function renderTeachers(){
+  const q=(document.getElementById('tcSearch').value||'').toLowerCase();
+  const f=getTeachers().filter(t=>!q||t.name.toLowerCase().includes(q)||t.id.toLowerCase().includes(q));
+  let h='';
+  f.forEach((t,i)=>{
+    const photo=getTcPhoto(t.name)||STUDENT_PHOTOS_M[i%STUDENT_PHOTOS_M.length];
+    h+=`<tr>
+      <td><img src="${photo}" class="tc-thumb" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&size=40'"></td>
+      <td class="font-medium">${t.name}</td>
+      <td>${t.id}</td>
+      <td><span class="badge badge-info">${t.dept}</span></td>
+      <td>${t.sub}</td>
+      <td>${t.exp} yrs</td>
+      <td>${t.email}</td>
+      <td>${t.mob}</td>
+      <td><button class="text-xs px-2 py-1 text-white rounded" style="background:#dc3545" onclick="delTc('${t.id}')"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+  });
+  document.getElementById('tcBody').innerHTML=h;
+}
+function openAddTc(){document.getElementById('addTcForm').reset();$('#addTcModal').modal('show');}
+function addTeacher(){
+  const fd=new FormData(document.getElementById('addTcForm'));
+  const all=getTeachers();
+  all.push({name:fd.get('name'),id:fd.get('teacherId'),qual:fd.get('qualification'),dept:fd.get('department'),sub:fd.get('subject'),exp:+fd.get('experience'),email:fd.get('email'),mob:fd.get('mobile')});
+  setTeachers(all);$('#addTcModal').modal('hide');renderTeachers();updateDash();toast('Teacher added!');
+}
+function delTc(id){if(!confirm('Delete this teacher?'))return;setTeachers(getTeachers().filter(t=>t.id!==id));renderTeachers();updateDash();toast('Teacher deleted!');}
+
+// ======= ATTENDANCE =======
+function loadAttStu(){
+  const br=document.getElementById('attBranch').value,sm=document.getElementById('attSem').value;
+  if(!br||!sm)return;
+  const students=getStudents().filter(s=>s.branch===br&&s.semester===+sm);
+  const dt=document.getElementById('attDate').value;
+  let h='';
+  students.forEach(s=>{
+    const ex=(dt&&getAttendance()[dt]&&getAttendance()[dt][s.rollNumber])||'';
+    const photo=getStuPhoto(s.name,s.id);
+    h+=`<tr>
+      <td><img src="${photo}" class="stu-thumb" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}&size=40'"></td>
+      <td>${s.rollNumber}</td>
+      <td>${s.name}</td>
+      <td><span class="badge badge-info">${s.branch}</span></td>
+      <td>
+        <select class="ui dropdown att-sel" data-roll="${s.rollNumber}">
+          <option value="">Select</option>
+          <option value="present" ${ex==='present'?'selected':''}>✅ Present</option>
+          <option value="absent" ${ex==='absent'?'selected':''}>❌ Absent</option>
+        </select>
+      </td>
+    </tr>`;
+  });
+  document.getElementById('attBody').innerHTML=h;
+  document.getElementById('attTable').style.display='table';
+  document.getElementById('attPlace').style.display='none';
+}
+
+function markAllPresent(){
+  document.querySelectorAll('.att-sel').forEach(sel=>sel.value='present');
+  toast('All students marked Present');
+}
+
+function saveAtt(){
+  const dt=document.getElementById('attDate').value;
+  if(!dt){toast('Select a date!','error');return;}
+  const att=getAttendance();if(!att[dt])att[dt]={};
+  document.querySelectorAll('.att-sel').forEach(sel=>{if(sel.value)att[dt][sel.dataset.roll]=sel.value;});
+  setAttendance(att);
+  // Recalculate attendance %
+  const all=getStudents();
+  all.forEach(s=>{
+    let total=0,present=0;
+    Object.keys(att).forEach(d=>{if(att[d][s.rollNumber]){total++;if(att[d][s.rollNumber]==='present')present++;}});
+    s.attendance=total>0?+((present/total)*100).toFixed(1):0;
+  });
+  setStudents(all);updateDash();toast('Attendance saved! Students can see updated attendance in portal.');
+}
+
+// ======= BIOMETRIC SCAN =======
+let biometricType='fingerprint';
+function openBiometricScan(type){
+  if(!document.getElementById('attBranch').value||!document.getElementById('attSem').value){toast('Please select branch and semester first!','error');return;}
+  biometricType=type;
+  const isFP=type==='fingerprint';
+  document.getElementById('scanTitle').textContent=isFP?'Fingerprint Attendance':'Face Recognition Attendance';
+  document.getElementById('scanSubtitle').textContent=isFP?'Students place finger on scanner one by one':'Students look at the camera one by one';
+  document.getElementById('scanIcon').className=isFP?'fas fa-fingerprint text-6xl text-blue-700':'fas fa-camera text-6xl text-blue-700';
+  document.getElementById('scanStatus').textContent='Ready to scan...';
+  document.getElementById('scanRing').className='scan-ring';
+  document.getElementById('scanResult').className='mt-3 hidden';
+  document.getElementById('scanModal').classList.add('open');
+}
+function closeScanModal(){document.getElementById('scanModal').classList.remove('open');}
+function simulateBiometric(){
+  document.getElementById('scanStatus').textContent='Scanning...';
+  document.getElementById('scanRing').className='scan-ring';
+  setTimeout(()=>{
+    const students=getStudents().filter(s=>s.branch===document.getElementById('attBranch').value&&s.semester===+document.getElementById('attSem').value);
+    const randomStu=students[Math.floor(Math.random()*students.length)];
+    if(!randomStu)return;
+    document.getElementById('scanRing').className='scan-ring success';
+    document.getElementById('scanIcon').className='fas fa-check-circle text-6xl text-green-600';
+    document.getElementById('scanStatus').textContent='✓ Verified: '+randomStu.name;
+    // Mark this student present
+    const dt=document.getElementById('attDate').value||new Date().toISOString().split('T')[0];
+    const att=getAttendance();if(!att[dt])att[dt]={};
+    att[dt][randomStu.rollNumber]='present';setAttendance(att);
+    // Update selector if visible
+    const sel=document.querySelector('.att-sel[data-roll="'+randomStu.rollNumber+'"]');
+    if(sel)sel.value='present';
+    const resEl=document.getElementById('scanResult');
+    resEl.className='mt-3 p-2 bg-green-50 rounded text-sm text-green-700';
+    resEl.textContent='✓ '+randomStu.name+' marked Present';
+    // Reset for next scan
+    setTimeout(()=>{
+      document.getElementById('scanRing').className='scan-ring';
+      document.getElementById('scanIcon').className=biometricType==='fingerprint'?'fas fa-fingerprint text-6xl text-blue-700':'fas fa-camera text-6xl text-blue-700';
+      document.getElementById('scanStatus').textContent='Ready for next scan...';
+    },2000);
+  },1500);
+}
+
+// ======= VIEW WEBSITE =======
+function viewWebsite(){
+  // Try to open index.html in same folder
+  const base = window.location.href.replace('admin.html','');
+  window.open(base + 'index.html', '_blank');
+}
+
+// ======= NEWS MANAGEMENT (Real-time sync to website) =======
+function renderNews(){
+  const news=getNews();
+  const colorMap={
+    blue:{bg:'bg-blue-50',border:'border-blue-200',icon:'fas fa-newspaper',text:'text-blue-700'},
+    green:{bg:'bg-green-50',border:'border-green-200',icon:'fas fa-trophy',text:'text-green-700'},
+    yellow:{bg:'bg-yellow-50',border:'border-yellow-200',icon:'fas fa-calendar-alt',text:'text-yellow-700'},
+    red:{bg:'bg-red-50',border:'border-red-200',icon:'fas fa-exclamation-circle',text:'text-red-700'}
+  };
+  let h='';
+  if(!news.length){
+    h='<div class="custom-card p-8 text-center text-gray-500"><i class="fas fa-newspaper text-4xl mb-3 text-gray-300 block"></i><p>No news added yet. Click "Add News" to publish on website.</p></div>';
+  }
+  news.forEach(n=>{
+    const c=colorMap[n.color]||colorMap.blue;
+    h+=`<div class="custom-card p-6" style="border-left:4px solid ${n.color==='blue'?'#00b4d8':n.color==='green'?'#28a745':n.color==='yellow'?'#ffc107':'#dc3545'}">
+      <div class="flex justify-between items-start">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:${n.color==='blue'?'#e0f7fa':n.color==='green'?'#e8f5e9':n.color==='yellow'?'#fff8e1':'#fce4ec'}">
+            <i class="${n.icon||'fas fa-newspaper'}" style="color:${n.color==='blue'?'#00b4d8':n.color==='green'?'#28a745':n.color==='yellow'?'#f0a500':'#dc3545'}"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <h4 class="font-bold">${n.title}</h4>
+              <span class="badge badge-info text-xs">${n.date}</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-1">${n.short}</p>
+            <p class="text-gray-400 text-xs">${n.full.substring(0,80)}...</p>
+          </div>
+        </div>
+        <button onclick="delNews(${n.id})" class="text-xs px-2 py-1 text-white rounded ml-4 flex-shrink-0" style="background:#dc3545">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('newsList').innerHTML=h;
+}
+
+function openAddNews(){
+  // Clear fields
+  document.getElementById('newsTitle').value='';
+  document.getElementById('newsDate').value='';
+  document.getElementById('newsShort').value='';
+  document.getElementById('newsFull').value='';
+  document.getElementById('newsColor').value='blue';
+  document.getElementById('newsErr').style.display='none';
+  // Show modal
+  const modal = document.getElementById('addNewsModal');
+  modal.style.display='flex';
+}
+
+function closeNewsModal(){
+  document.getElementById('addNewsModal').style.display='none';
+}
+
+function addNews(){
+  const title=document.getElementById('newsTitle').value.trim();
+  const date=document.getElementById('newsDate').value.trim();
+  const color=document.getElementById('newsColor').value;
+  const short=document.getElementById('newsShort').value.trim();
+  const full=document.getElementById('newsFull').value.trim();
+
+  // Validation
+  if(!title||!short||!full){
+    const err=document.getElementById('newsErr');
+    err.textContent='⚠️ Title, Short Description మరియు Full Details తప్పనిసరి!';
+    err.style.display='block';
+    return;
+  }
+
+  const colorIconMap={blue:'fas fa-newspaper',green:'fas fa-trophy',yellow:'fas fa-calendar-alt',red:'fas fa-exclamation-circle'};
+  const all=getNews();
+  const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+
+  all.unshift({
+    id: Date.now(),
+    title,
+    date: date||today,
+    icon: colorIconMap[color],
+    color,
+    short,
+    full
+  });
+
+  setNews(all);
+  closeNewsModal();
+  renderNews();
+  toast('✅ News published! Website homepage లో visible అవుతుంది.');
+}
+
+function delNews(id){
+  if(!confirm('ఈ news delete చేయాలా? Website నుండి కూడా remove అవుతుంది.'))return;
+  setNews(getNews().filter(n=>n.id!==id));
+  renderNews();
+  toast('News deleted from website.');
+}
+
+// ======= INIT =======
+// Close news modal when clicking outside
+document.addEventListener('click', function(e){
+  const modal = document.getElementById('addNewsModal');
+  if(e.target === modal) closeNewsModal();
+});
+
+document.addEventListener('DOMContentLoaded',function(){
+  initData();
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('attDate').value=today;
+  $('.ui.dropdown').dropdown();$('.ui.modal').modal();
+  document.getElementById('aPass').addEventListener('keypress',e=>{if(e.key==='Enter')adminLogin();});
+  document.getElementById('aUser').addEventListener('keypress',e=>{if(e.key==='Enter')adminLogin();});
+});
+</script>
+</body>
+</html>

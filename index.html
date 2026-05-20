@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>National Institute of Technology - NIT Hyderabad</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f8f9fa;color:#212529;line-height:1.6}
+h1,h2,h3,h4,h5,h6{font-family:'Playfair Display',serif;font-weight:600}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#f1f1f1}::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:4px}
+.navbar{background:#1e3a5f;box-shadow:0 2px 10px rgba(0,0,0,.1);position:sticky;top:0;z-index:1000}
+.nav-link{color:#fff;transition:all .3s;position:relative;padding:.5rem 1rem;text-decoration:none;cursor:pointer}
+.nav-link:hover{color:#f0a500}
+.nav-link::after{content:'';position:absolute;width:0;height:2px;bottom:0;left:50%;background:#f0a500;transition:all .3s;transform:translateX(-50%)}
+.nav-link:hover::after{width:80%}
+.hero-section{background:linear-gradient(rgba(30,58,95,.92),rgba(30,58,95,.82)),url('https://images.unsplash.com/photo-1562774053-701939374585?w=1920&q=80') center/cover no-repeat;min-height:600px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff}
+.custom-card{background:#fff;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,.1);transition:all .3s;overflow:hidden}
+.custom-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.btn-primary{background:#1e3a5f;color:#fff;border:none;padding:12px 24px;border-radius:6px;cursor:pointer;transition:all .3s;font-weight:500;text-decoration:none;display:inline-block}
+.btn-primary:hover{background:#0f2744;transform:translateY(-2px);box-shadow:0 5px 15px rgba(30,58,95,.3);color:#fff}
+.btn-secondary{background:#f0a500;color:#fff;border:none;padding:12px 24px;border-radius:6px;cursor:pointer;transition:all .3s;font-weight:500;text-decoration:none;display:inline-block}
+.btn-secondary:hover{background:#d89200;transform:translateY(-2px);color:#fff}
+.section-title{position:relative;display:inline-block;margin-bottom:30px}
+.section-title::after{content:'';position:absolute;width:50px;height:3px;background:#f0a500;bottom:-8px;left:0}
+.footer{background:#1e3a5f;color:#fff;padding:60px 0 30px}
+.footer a{color:rgba(255,255,255,.8);text-decoration:none;transition:all .3s}
+.footer a:hover{color:#f0a500}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:30px;margin-top:40px}
+.page-section{display:none}.page-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .6s ease forwards}
+.tab-btn{padding:10px 20px;background:transparent;border:none;cursor:pointer;font-weight:500;color:#212529;border-bottom:2px solid transparent;transition:all .3s}
+.tab-btn.active{color:#1e3a5f;border-bottom-color:#1e3a5f}
+.custom-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.1)}
+.custom-table th,.custom-table td{padding:12px 15px;text-align:left}
+.custom-table th{background:#1e3a5f;color:#fff;font-weight:500}
+.custom-table tr{border-bottom:1px solid #eee}.custom-table tr:last-child{border-bottom:none}
+.custom-table tr:hover{background:rgba(0,180,216,.05)}
+.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 5px 15px rgba(0,0,0,.1);position:relative;overflow:hidden;transition:all .3s}
+.stat-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.stat-card.blue::before{background:#00b4d8}.stat-card.green::before{background:#28a745}.stat-card.yellow::before{background:#ffc107}.stat-card.red::before{background:#dc3545}
+.dashboard-sidebar{background:#1e3a5f;color:#fff;height:100vh;width:250px;position:fixed;left:0;top:0;z-index:1001;transition:all .3s;overflow-y:auto}
+.sidebar-link{display:flex;align-items:center;padding:12px 20px;color:rgba(255,255,255,.8);text-decoration:none;transition:all .3s;border-left:3px solid transparent;cursor:pointer}
+.sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#f0a500}
+.sidebar-link i{margin-right:15px;font-size:18px;width:20px;text-align:center}
+.dashboard-content{margin-left:250px;padding:20px;transition:all .3s}
+.dashboard-header{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.1);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-radius:8px}
+.login-container{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e3a5f,#00b4d8);padding:20px}
+.login-card{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:450px;width:100%;overflow:hidden}
+.login-header{background:linear-gradient(135deg,#1e3a5f,#00b4d8);padding:30px;text-align:center;color:#fff}
+.login-body{padding:30px}
+.profile-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.profile-header{background:linear-gradient(135deg,#1e3a5f,#00b4d8);height:150px;position:relative}
+.profile-avatar{width:120px;height:120px;border-radius:50%;border:4px solid #fff;position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);background:#fff;overflow:hidden}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.badge-success{background:rgba(40,167,69,.1);color:#28a745}.badge-danger{background:rgba(220,53,69,.1);color:#dc3545}.badge-warning{background:rgba(255,193,7,.1);color:#856404}.badge-info{background:rgba(0,180,216,.1);color:#00b4d8}
+.calendar-day{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;transition:all .3s;font-size:14px}
+.calendar-day.present{background:#28a745;color:#fff}.calendar-day.absent{background:#dc3545;color:#fff}
+.calendar-day:hover{transform:scale(1.1)}
+/* =============================================
+   MEDIA QUERIES - FULL RESPONSIVE
+   ============================================= */
+
+/* Large Desktop: 1200px+ */
+@media(min-width:1200px){
+  .hero-section{min-height:700px}
+  .container{max-width:1140px}
+}
+
+/* Desktop / Laptop: 993px - 1199px */
+@media(max-width:1199px){
+  .dashboard-content{margin-left:250px;padding:16px}
+}
+
+/* Tablet Landscape + Small Laptop: 769px - 992px */
+@media(max-width:992px){
+  .dashboard-sidebar{left:-250px}
+  .dashboard-sidebar.mobile-open{left:0;box-shadow:4px 0 20px rgba(0,0,0,.3)}
+  .dashboard-content{margin-left:0;padding:15px}
+  .hero-section{min-height:500px}
+  .hero-section h1{font-size:2.2rem !important}
+  .hero-section p{font-size:1.1rem !important}
+  .profile-card .profile-header{height:120px}
+  .profile-avatar{width:100px;height:100px;bottom:-50px}
+  .login-card{max-width:420px}
+  .stat-card{padding:15px}
+}
+
+/* Tablet Portrait: 601px - 768px */
+@media(max-width:768px){
+  /* Navbar */
+  .navbar .container{padding:10px 16px}
+  .navbar h1{font-size:1rem !important}
+  .navbar p{display:none}
+
+  /* Hero */
+  .hero-section{min-height:420px;padding:40px 16px}
+  .hero-section h1{font-size:1.8rem !important;line-height:1.3}
+  .hero-section p{font-size:1rem !important}
+  .hero-section .btn-primary,.hero-section .btn-secondary{padding:10px 20px;font-size:1rem}
+
+  /* Sections */
+  .container{padding-left:16px !important;padding-right:16px !important}
+  .py-16{padding-top:40px !important;padding-bottom:40px !important}
+  .py-8{padding-top:24px !important;padding-bottom:24px !important}
+
+  /* Cards grid */
+  .grid.grid-cols-4,.grid.lg\:grid-cols-4{grid-template-columns:repeat(2,1fr) !important}
+  .grid.grid-cols-3,.grid.lg\:grid-cols-3,.grid.md\:grid-cols-3{grid-template-columns:repeat(1,1fr) !important}
+  .grid.md\:grid-cols-2{grid-template-columns:repeat(1,1fr) !important}
+
+  /* Gallery */
+  .gallery-img{height:160px}
+  .grid.grid-cols-2.md\:grid-cols-4{grid-template-columns:repeat(2,1fr) !important}
+
+  /* Dashboard */
+  .dashboard-content{margin-left:0;padding:12px}
+  .dashboard-header{padding:12px 14px;border-radius:6px}
+  .dashboard-header h2{font-size:1rem}
+  .stat-card{padding:14px}
+  .stat-card h3{font-size:1.4rem}
+
+  /* Tables */
+  .custom-table th,.custom-table td{padding:8px 10px;font-size:13px}
+  .overflow-x-auto{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+  /* Login */
+  .login-container{padding:16px}
+  .login-header{padding:24px 16px}
+  .login-body{padding:20px 16px}
+  .login-card{max-width:100%}
+
+  /* Profile */
+  .profile-header{height:100px}
+  .profile-avatar{width:90px;height:90px;bottom:-45px}
+  .lg\:col-span-2{grid-column:span 1 !important}
+
+  /* Calendar */
+  .calendar-day{width:34px;height:34px;font-size:12px}
+
+  /* Tabs */
+  .tab-btn{padding:8px 12px;font-size:13px}
+
+  /* Dept sections */
+  .dept-section .md\:flex-row{flex-direction:column !important}
+  .dept-section .md\:w-1\/3,.dept-section .md\:w-2\/3{width:100% !important}
+
+  /* Section title */
+  .text-3xl,.text-4xl{font-size:1.6rem !important}
+  .text-5xl{font-size:2rem !important}
+  .text-6xl{font-size:2.2rem !important}
+
+  /* Attendance */
+  .grid.md\:grid-cols-3{grid-template-columns:repeat(1,1fr) !important}
+  .att-sel{width:120px}
+
+  /* Sidebar nav text */
+  .sidebar-link span{font-size:14px}
+}
+
+/* Mobile Large: 481px - 600px */
+@media(max-width:600px){
+  .hero-section h1{font-size:1.5rem !important}
+  .grid.grid-cols-4,.grid.lg\:grid-cols-4{grid-template-columns:repeat(2,1fr) !important}
+  .grid.grid-cols-2.md\:grid-cols-4{grid-template-columns:repeat(2,1fr) !important}
+  .gallery-img{height:140px}
+  .custom-card.p-6{padding:16px !important}
+  .custom-card.p-8{padding:20px !important}
+  .footer{padding:40px 0 20px}
+  .footer .grid{grid-template-columns:repeat(2,1fr) !important}
+  .stat-card h3{font-size:1.3rem}
+  .scan-box{padding:24px 16px}
+  .scan-ring{width:120px;height:120px}
+  .scan-ring i{font-size:3rem !important}
+}
+
+/* Mobile Small: 320px - 480px */
+@media(max-width:480px){
+  body{font-size:14px}
+  .navbar .container{padding:8px 12px}
+  .navbar .w-12{width:36px !important;height:36px !important}
+  .navbar h1{font-size:0.85rem !important}
+
+  .hero-section{min-height:360px;padding:30px 12px}
+  .hero-section h1{font-size:1.3rem !important}
+  .hero-section p{font-size:0.9rem !important}
+  .btn-primary,.btn-secondary{padding:9px 16px;font-size:0.9rem}
+
+  .container{padding-left:12px !important;padding-right:12px !important}
+  .py-16{padding-top:30px !important;padding-bottom:30px !important}
+
+  .grid.grid-cols-4,.grid.lg\:grid-cols-4,.grid.md\:grid-cols-2,.grid.md\:grid-cols-4{grid-template-columns:repeat(1,1fr) !important}
+  .grid.grid-cols-2{grid-template-columns:repeat(2,1fr) !important}
+  .grid.grid-cols-2.md\:grid-cols-4{grid-template-columns:repeat(2,1fr) !important}
+
+  .gallery-img{height:120px}
+  .custom-card.p-6{padding:14px !important}
+
+  .text-2xl{font-size:1.2rem !important}
+  .text-3xl,.text-4xl{font-size:1.3rem !important}
+  .text-5xl,.text-6xl{font-size:1.6rem !important}
+  .text-xl{font-size:1rem !important}
+
+  .dashboard-content{padding:10px}
+  .dashboard-header{padding:10px 12px;margin-bottom:12px}
+  .stat-card{padding:12px}
+  .stat-card h3{font-size:1.2rem}
+  .stat-card .w-12{width:36px !important;height:36px !important}
+
+  .custom-table{font-size:12px}
+  .custom-table th,.custom-table td{padding:7px 8px}
+
+  .login-header{padding:20px 12px}
+  .login-body{padding:16px 12px}
+
+  .profile-header{height:80px}
+  .profile-avatar{width:80px;height:80px;bottom:-40px}
+  .mt-16{margin-top:50px !important}
+
+  .calendar-day{width:30px;height:30px;font-size:11px}
+  #calGrid{gap:4px !important}
+
+  .footer .grid{grid-template-columns:repeat(1,1fr) !important}
+  .footer{padding:30px 0 15px}
+
+  .tab-btn{padding:6px 10px;font-size:12px}
+
+  .scan-box{padding:20px 12px;border-radius:16px}
+  .scan-ring{width:110px;height:110px}
+
+  .sidebar-link{padding:10px 14px}
+  .sidebar-link i{margin-right:10px;font-size:16px}
+  .sidebar-link span{font-size:13px}
+}
+
+/* Very Small Mobile: below 360px */
+@media(max-width:360px){
+  .hero-section h1{font-size:1.1rem !important}
+  .btn-primary,.btn-secondary{padding:8px 12px;font-size:0.85rem}
+  .navbar h1{font-size:0.75rem !important}
+  .grid.grid-cols-2{grid-template-columns:repeat(1,1fr) !important}
+  .gallery-img{height:110px}
+  .calendar-day{width:28px;height:28px;font-size:10px}
+}
+
+/* Print */
+@media print{
+  .navbar,.footer,.dashboard-sidebar,.btn-primary,.btn-secondary{display:none !important}
+  .dashboard-content{margin-left:0 !important}
+  .page-section{display:block !important}
+}
+
+/* ============================================= */
+
+.gallery-img{width:100%;height:200px;object-fit:cover;transition:transform .5s}
+.gallery-item:hover .gallery-img{transform:scale(1.1)}
+/* Fingerprint/Face scan modal */
+.scan-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center}
+.scan-modal.open{display:flex}
+.scan-box{background:#fff;border-radius:20px;padding:40px;text-align:center;max-width:400px;width:90%}
+.scan-ring{width:150px;height:150px;border-radius:50%;border:4px solid #1e3a5f;margin:20px auto;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.scan-ring::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#00b4d8,transparent);animation:scanLine 1.5s linear infinite}
+@keyframes scanLine{0%{top:0}100%{top:100%}}
+.scan-ring.success{border-color:#28a745;animation:pulse 0.5s}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+.student-photo{width:100%;height:100%;object-fit:cover;border-radius:50%}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="mainNavbar">
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <div class="flex items-center cursor-pointer" onclick="navigateTo('home')">
+      <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center mr-3"><i class="fas fa-university text-blue-900 text-xl"></i></div>
+      <div><h1 class="text-white text-lg font-bold">National Institute of Technology</h1><p class="text-blue-200 text-xs">Excellence in Engineering Education</p></div>
+    </div>
+    <div class="hidden md:flex items-center space-x-2">
+      <a class="nav-link" onclick="navigateTo('home')">Home</a>
+      <a class="nav-link" onclick="navigateTo('about')">About</a>
+      <a class="nav-link" onclick="navigateTo('departments')">Departments</a>
+      <a class="nav-link" onclick="navigateTo('contact')">Contact</a>
+      <a class="nav-link" onclick="navigateTo('student-login')">Student Login</a>
+    </div>
+    <div class="md:hidden"><button class="text-white p-2" onclick="toggleMobileMenu()"><i class="fas fa-bars text-xl"></i></button></div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden bg-blue-800">
+    <div class="container mx-auto px-4 py-3 flex flex-col space-y-2">
+      <a class="nav-link" onclick="navigateTo('home');toggleMobileMenu()">Home</a>
+      <a class="nav-link" onclick="navigateTo('about');toggleMobileMenu()">About</a>
+      <a class="nav-link" onclick="navigateTo('departments');toggleMobileMenu()">Departments</a>
+      <a class="nav-link" onclick="navigateTo('contact');toggleMobileMenu()">Contact</a>
+      <a class="nav-link" onclick="navigateTo('student-login');toggleMobileMenu()">Student Login</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ======== HOME ======== -->
+<section id="page-home" class="page-section active">
+  <div class="hero-section">
+    <div class="hero-content fade-in" style="max-width:800px;padding:0 20px">
+      <h1 class="text-4xl md:text-6xl font-bold mb-6">Welcome to National Institute of Technology</h1>
+      <p class="text-xl md:text-2xl mb-8 font-light">Empowering Future Engineers with Excellence in Education, Research, and Innovation</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a class="btn-primary text-lg px-8 py-3" onclick="navigateTo('about')">Learn More</a>
+        <a class="btn-secondary text-lg px-8 py-3" onclick="navigateTo('student-login')">Student Portal</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold section-title mx-auto">College Overview</h2><p class="mt-8 text-gray-600 max-w-3xl mx-auto">National Institute of Technology is a premier engineering institution established in 1955, committed to providing world-class education.</p></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="custom-card p-6 text-center"><div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-user-graduate text-blue-600 text-2xl"></i></div><h3 class="text-xl font-bold mb-2">2500+ Students</h3><p class="text-gray-600">Studying across various engineering disciplines</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-chalkboard-teacher text-green-600 text-2xl"></i></div><h3 class="text-xl font-bold mb-2">150+ Faculty</h3><p class="text-gray-600">Highly qualified and experienced professors</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-award text-yellow-600 text-2xl"></i></div><h3 class="text-xl font-bold mb-2">NAAC A++ Grade</h3><p class="text-gray-600">Highest accreditation for academic excellence</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-building text-red-600 text-2xl"></i></div><h3 class="text-xl font-bold mb-2">50+ Labs</h3><p class="text-gray-600">State-of-the-art laboratory facilities</p></div>
+    </div>
+  </div>
+
+  <div class="bg-gray-100 py-16">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold section-title mx-auto">Our Courses</h2><p class="mt-8 text-gray-600 max-w-3xl mx-auto">We offer undergraduate programs in various engineering disciplines.</p></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="custom-card overflow-hidden"><img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=80" alt="AINML" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-bold mb-2">Artificial Intelligence & Machine Learning</h3><p class="text-gray-600 mb-4">4 Years Full-Time B.Tech Program</p><a class="text-blue-600 font-medium hover:text-blue-800 cursor-pointer" onclick="navigateTo('departments')">Learn More <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+        <div class="custom-card overflow-hidden"><img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80" alt="CSE" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-bold mb-2">Computer Science & Engineering</h3><p class="text-gray-600 mb-4">4 Years Full-Time B.Tech Program</p><a class="text-blue-600 font-medium hover:text-blue-800 cursor-pointer" onclick="navigateTo('departments')">Learn More <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+        <div class="custom-card overflow-hidden"><img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&q=80" alt="ECE" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-bold mb-2">Electronics & Communication Engineering</h3><p class="text-gray-600 mb-4">4 Years Full-Time B.Tech Program</p><a class="text-blue-600 font-medium hover:text-blue-800 cursor-pointer" onclick="navigateTo('departments')">Learn More <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+        <div class="custom-card overflow-hidden"><img src="https://images.unsplash.com/photo-1590012314607-cda9d9b699ae?w=600&q=80" alt="EEE" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-bold mb-2">Electrical & Electronics Engineering</h3><p class="text-gray-600 mb-4">4 Years Full-Time B.Tech Program</p><a class="text-blue-600 font-medium hover:text-blue-800 cursor-pointer" onclick="navigateTo('departments')">Learn More <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+        <div class="custom-card overflow-hidden"><img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80" alt="Mechanical" class="w-full h-48 object-cover"><div class="p-6"><h3 class="text-xl font-bold mb-2">Mechanical Engineering</h3><p class="text-gray-600 mb-4">4 Years Full-Time B.Tech Program</p><a class="text-blue-600 font-medium hover:text-blue-800 cursor-pointer" onclick="navigateTo('departments')">Learn More <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+        <div class="custom-card overflow-hidden flex items-center justify-center bg-blue-900 text-white p-6 cursor-pointer" onclick="navigateTo('departments')"><div class="text-center"><h3 class="text-xl font-bold mb-2">M.Tech Programs</h3><p class="mb-4">2 Years Full-Time Programs</p><span class="text-yellow-400 font-medium">Explore M.Tech <i class="fas fa-arrow-right ml-1"></i></span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- News -->
+  <div class="bg-gray-100 py-16">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold section-title mx-auto">Latest News & Events</h2></div>
+      <div id="homeNewsFeed" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <div class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold section-title mx-auto">College Gallery</h2></div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="relative group overflow-hidden rounded-lg gallery-item"><img src="https://images.unsplash.com/photo-1562774053-701939374585?w=400&q=80" alt="Main Building" class="gallery-img"><div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-500 flex items-center justify-center"><p class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-medium">Main Building</p></div></div>
+      <div class="relative group overflow-hidden rounded-lg gallery-item"><img src="https://images.unsplash.com/photo-1523050854058-8df90110c476?w=400&q=80" alt="Campus View" class="gallery-img"><div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-500 flex items-center justify-center"><p class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-medium">Campus View</p></div></div>
+      <div class="relative group overflow-hidden rounded-lg gallery-item"><img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80" alt="Library" class="gallery-img"><div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-500 flex items-center justify-center"><p class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-medium">Central Library</p></div></div>
+      <div class="relative group overflow-hidden rounded-lg gallery-item"><img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&q=80" alt="Classroom" class="gallery-img"><div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-500 flex items-center justify-center"><p class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-medium">Smart Classroom</p></div></div>
+      <div class="relative group overflow-hidden rounded-lg gallery-item"><img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=400&q=80" alt="Computer Lab" class="gallery-img"><div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-500 flex items-center justify-center"><p class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-medium">Computer Lab</p></div></div>
+      <div class="relative group overflow-hidden rounded-lg gallery-item"><img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=400&q=80" alt="Sports" class="gallery-img"><div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-500 flex items-center justify-center"><p class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-medium">Sports Ground</p></div></div>
+      <div class="relative group overflow-hidden rounded-lg gallery-item"><img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=80" alt="Auditorium" class="gallery-img"><div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-500 flex items-center justify-center"><p class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-medium">Auditorium</p></div></div>
+      <div class="relative group overflow-hidden rounded-lg gallery-item"><img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=400&q=80" alt="ECE Lab" class="gallery-img"><div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-500 flex items-center justify-center"><p class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-medium">ECE Electronics Lab</p></div></div>
+    </div>
+  </div>
+
+  <div class="bg-gray-100 py-16">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold section-title mx-auto">Contact Information</h2></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="custom-card p-6 text-center cursor-pointer" onclick="navigateTo('contact')"><div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-map-marker-alt text-blue-600 text-2xl"></i></div><h3 class="text-xl font-bold mb-2">Address</h3><p class="text-gray-600">NIT, Engineering College Road<br>Hyderabad, Telangana - 500001</p></div>
+        <div class="custom-card p-6 text-center cursor-pointer" onclick="navigateTo('contact')"><div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-phone-alt text-green-600 text-2xl"></i></div><h3 class="text-xl font-bold mb-2">Phone</h3><p class="text-gray-600">+91 40 2345 6789</p></div>
+        <div class="custom-card p-6 text-center cursor-pointer" onclick="navigateTo('contact')"><div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-envelope text-yellow-600 text-2xl"></i></div><h3 class="text-xl font-bold mb-2">Email</h3><p class="text-gray-600">info@nithyderabad.edu</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== ABOUT ======== -->
+<section id="page-about" class="page-section">
+  <div class="bg-blue-900 text-white py-20"><div class="container mx-auto px-4 text-center"><h1 class="text-4xl md:text-5xl font-bold mb-4">About Our Institution</h1><p class="text-xl text-blue-200">Discover the Legacy of Excellence in Engineering Education</p></div></div>
+  <div class="container mx-auto px-4 py-16">
+    <div class="flex flex-col md:flex-row items-center gap-12">
+      <div class="w-full md:w-1/2"><img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&q=80" alt="Campus" class="w-full rounded-lg shadow-lg"></div>
+      <div class="w-full md:w-1/2"><h2 class="text-3xl font-bold mb-6 section-title">Our History</h2><p class="text-gray-600 mb-4">National Institute of Technology was established in 1955 as a premier engineering institution. Starting with just three departments and 150 students, we have expanded to five major engineering departments with over 2500 students.</p><p class="text-gray-600">Our alumni network of more than 50,000 engineers serves in leading positions across the globe.</p></div>
+    </div>
+  </div>
+  <div class="bg-gray-100 py-16">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="custom-card p-8"><div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-6"><i class="fas fa-eye text-blue-600 text-2xl"></i></div><h2 class="text-2xl font-bold mb-4">Our Vision</h2><p class="text-gray-600">To be a globally recognized center of excellence in engineering education, research, and innovation.</p></div>
+        <div class="custom-card p-8"><div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6"><i class="fas fa-bullseye text-green-600 text-2xl"></i></div><h2 class="text-2xl font-bold mb-4">Our Mission</h2><p class="text-gray-600">To provide quality engineering education through comprehensive curriculum, state-of-the-art facilities, and experienced faculty.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== DEPARTMENTS ======== -->
+<section id="page-departments" class="page-section">
+  <div class="bg-blue-900 text-white py-20"><div class="container mx-auto px-4 text-center"><h1 class="text-4xl md:text-5xl font-bold mb-4">Academic Departments</h1><p class="text-xl text-blue-200">Explore Our Diverse Engineering Disciplines</p></div></div>
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-wrap justify-center border-b">
+      <button class="tab-btn active" onclick="showDept('ainml',this)">AINML</button>
+      <button class="tab-btn" onclick="showDept('cse',this)">CSE</button>
+      <button class="tab-btn" onclick="showDept('ece',this)">ECE</button>
+      <button class="tab-btn" onclick="showDept('eee',this)">EEE</button>
+      <button class="tab-btn" onclick="showDept('mech',this)">Mechanical</button>
+    </div>
+  </div>
+  <!-- AINML -->
+  <div id="dept-ainml" class="dept-section container mx-auto px-4 pb-16">
+    <div class="flex flex-col md:flex-row gap-8 mb-12"><div class="w-full md:w-1/3"><img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=80" alt="AINML" class="w-full rounded-lg shadow-lg"></div><div class="w-full md:w-2/3"><h2 class="text-3xl font-bold mb-4 section-title">Artificial Intelligence & Machine Learning</h2><p class="text-gray-600 mb-4">Established in 2020, the AINML department offers a comprehensive B.Tech program covering AI fundamentals, machine learning, deep learning, NLP, and computer vision.</p></div></div>
+    <h3 class="text-2xl font-bold mb-6">Faculty Members</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Ananya Sharma</h4><p class="text-gray-500">Professor & Head</p><p class="text-gray-600 text-sm mt-2">Ph.D. in ML, IIT Delhi</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Rahul Verma</h4><p class="text-gray-500">Associate Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. in CV, IISc Bangalore</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Priya Patel</h4><p class="text-gray-500">Assistant Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. in NLP, IIIT Hyderabad</p></div>
+    </div>
+    <h3 class="text-2xl font-bold mb-6">Key Subjects</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 3-4</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Introduction to AI</li><li>Machine Learning</li><li>Probability & Statistics</li><li>Data Structures</li></ul></div><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 5-6</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Deep Learning</li><li>Computer Vision</li><li>NLP</li><li>Reinforcement Learning</li></ul></div></div>
+  </div>
+  <!-- CSE -->
+  <div id="dept-cse" class="dept-section container mx-auto px-4 pb-16" style="display:none">
+    <div class="flex flex-col md:flex-row gap-8 mb-12"><div class="w-full md:w-1/3"><img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&q=80" alt="CSE" class="w-full rounded-lg shadow-lg"></div><div class="w-full md:w-2/3"><h2 class="text-3xl font-bold mb-4 section-title">Computer Science & Engineering</h2><p class="text-gray-600 mb-4">Established in 1985, CSE covers programming, data structures, algorithms, databases, OS, networks, cloud computing and cybersecurity.</p></div></div>
+    <h3 class="text-2xl font-bold mb-6">Faculty Members</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Vikram Singh</h4><p class="text-gray-500">Professor & Head</p><p class="text-gray-600 text-sm mt-2">Ph.D. IIT Bombay</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Meera Gupta</h4><p class="text-gray-500">Associate Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. NIT Trichy</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Arjun Reddy</h4><p class="text-gray-500">Assistant Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. JNTUH</p></div>
+    </div>
+    <h3 class="text-2xl font-bold mb-6">Key Subjects</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 3-4</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Data Structures & Algorithms</li><li>OOP with Java</li><li>DBMS</li><li>Computer Organization</li></ul></div><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 5-6</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Operating Systems</li><li>Computer Networks</li><li>Software Engineering</li><li>Web Technologies</li></ul></div></div>
+  </div>
+  <!-- ECE - FIXED with proper electronics image -->
+  <div id="dept-ece" class="dept-section container mx-auto px-4 pb-16" style="display:none">
+    <div class="flex flex-col md:flex-row gap-8 mb-12"><div class="w-full md:w-1/3"><img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=400&q=80" alt="ECE" class="w-full rounded-lg shadow-lg"></div><div class="w-full md:w-2/3"><h2 class="text-3xl font-bold mb-4 section-title">Electronics & Communication Engineering</h2><p class="text-gray-600 mb-4">Established in 1960, ECE covers analog/digital electronics, communication systems, signal processing, VLSI design, and embedded systems with extensive lab work and industry projects.</p></div></div>
+    <h3 class="text-2xl font-bold mb-6">Faculty Members</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Suresh Babu</h4><p class="text-gray-500">Professor & Head</p><p class="text-gray-600 text-sm mt-2">Ph.D. in VLSI, IIT Madras</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Kavitha Raman</h4><p class="text-gray-500">Associate Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. NIT Calicut</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Rajesh Nair</h4><p class="text-gray-500">Assistant Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. BITS Pilani</p></div>
+    </div>
+    <h3 class="text-2xl font-bold mb-6">Key Subjects</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 3-4</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Electronic Devices</li><li>Network Theory</li><li>Signals & Systems</li><li>EMF Theory</li></ul></div><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 5-6</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Analog Communication</li><li>Digital Communication</li><li>DSP</li><li>VLSI Design</li></ul></div></div>
+  </div>
+  <!-- EEE -->
+  <div id="dept-eee" class="dept-section container mx-auto px-4 pb-16" style="display:none">
+    <div class="flex flex-col md:flex-row gap-8 mb-12"><div class="w-full md:w-1/3"><img src="https://images.unsplash.com/photo-1590012314607-cda9d9b699ae?w=400&q=80" alt="EEE" class="w-full rounded-lg shadow-lg"></div><div class="w-full md:w-2/3"><h2 class="text-3xl font-bold mb-4 section-title">Electrical & Electronics Engineering</h2><p class="text-gray-600 mb-4">One of the founding departments from 1955, EEE covers electrical machines, power systems, control systems, power electronics, and renewable energy.</p></div></div>
+    <h3 class="text-2xl font-bold mb-6">Faculty Members</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Mohan Krishna</h4><p class="text-gray-500">Professor & Head</p><p class="text-gray-600 text-sm mt-2">Ph.D. IIT Kharagpur</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Lakshmi Devi</h4><p class="text-gray-500">Associate Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. NIT Warangal</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Srinivas Rao</h4><p class="text-gray-500">Assistant Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. JNTU Kakinada</p></div>
+    </div>
+    <h3 class="text-2xl font-bold mb-6">Key Subjects</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 3-4</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Electrical Circuits</li><li>EM Fields</li><li>Electrical Machines I</li><li>Measurements</li></ul></div><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 5-6</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Power Systems</li><li>Control Systems</li><li>Power Electronics</li><li>Electrical Machines II</li></ul></div></div>
+  </div>
+  <!-- MECH -->
+  <div id="dept-mech" class="dept-section container mx-auto px-4 pb-16" style="display:none">
+    <div class="flex flex-col md:flex-row gap-8 mb-12"><div class="w-full md:w-1/3"><img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=400&q=80" alt="Mech" class="w-full rounded-lg shadow-lg"></div><div class="w-full md:w-2/3"><h2 class="text-3xl font-bold mb-4 section-title">Mechanical Engineering</h2><p class="text-gray-600 mb-4">Established in 1955, Mechanical Engineering covers thermodynamics, fluid mechanics, manufacturing, machine design, and industrial engineering with extensive workshop practice.</p></div></div>
+    <h3 class="text-2xl font-bold mb-6">Faculty Members</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Rajesh Kumar</h4><p class="text-gray-500">Professor & Head</p><p class="text-gray-600 text-sm mt-2">Ph.D. IIT Kanpur</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Sunita Sharma</h4><p class="text-gray-500">Associate Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. NIT Rourkela</p></div>
+      <div class="custom-card p-6 text-center"><div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="" class="w-full h-full object-cover"></div><h4 class="font-bold">Dr. Anil Patel</h4><p class="text-gray-500">Assistant Professor</p><p class="text-gray-600 text-sm mt-2">Ph.D. BITS Pilani</p></div>
+    </div>
+    <h3 class="text-2xl font-bold mb-6">Key Subjects</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 3-4</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Engineering Thermodynamics</li><li>Strength of Materials</li><li>Fluid Mechanics</li><li>Manufacturing Tech I</li></ul></div><div class="bg-gray-100 p-4 rounded-lg"><h4 class="font-bold">Semester 5-6</h4><ul class="list-disc list-inside text-gray-600 mt-2"><li>Heat Transfer</li><li>Kinematics of Machinery</li><li>Machine Design I</li><li>Manufacturing Tech II</li></ul></div></div>
+  </div>
+</section>
+
+<!-- ======== CONTACT ======== -->
+<section id="page-contact" class="page-section">
+  <div class="bg-blue-900 text-white py-20"><div class="container mx-auto px-4 text-center"><h1 class="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1><p class="text-xl text-blue-200">We'd Love to Hear From You</p></div></div>
+  <div class="container mx-auto px-4 py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div>
+        <h2 class="text-3xl font-bold mb-6 section-title">Send Us a Message</h2>
+        <div class="ui form">
+          <div class="two fields"><div class="field"><label>First Name</label><input type="text" placeholder="First Name"></div><div class="field"><label>Last Name</label><input type="text" placeholder="Last Name"></div></div>
+          <div class="field"><label>Email</label><input type="email" placeholder="Your Email"></div>
+          <div class="field"><label>Phone</label><input type="text" placeholder="Your Phone"></div>
+          <div class="field"><label>Subject</label><select class="ui dropdown"><option>Select Subject</option><option>Admission Query</option><option>Academic Information</option><option>Placement Information</option><option>General Inquiry</option></select></div>
+          <div class="field"><label>Message</label><textarea rows="4" placeholder="Your Message"></textarea></div>
+          <button class="btn-primary" onclick="showToast('Message sent successfully!')">Send Message</button>
+        </div>
+      </div>
+      <div>
+        <h2 class="text-3xl font-bold mb-6 section-title">Contact Information</h2>
+        <div class="space-y-6">
+          <div class="flex items-start"><div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4 flex-shrink-0"><i class="fas fa-map-marker-alt text-blue-600"></i></div><div><h3 class="font-bold text-lg">Address</h3><p class="text-gray-600">NIT, Engineering College Road<br>Hyderabad, Telangana - 500001</p></div></div>
+          <div class="flex items-start"><div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4 flex-shrink-0"><i class="fas fa-phone-alt text-green-600"></i></div><div><h3 class="font-bold text-lg">Phone</h3><p class="text-gray-600">+91 40 2345 6789</p></div></div>
+          <div class="flex items-start"><div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center mr-4 flex-shrink-0"><i class="fas fa-envelope text-yellow-600"></i></div><div><h3 class="font-bold text-lg">Email</h3><p class="text-gray-600">info@nithyderabad.edu</p></div></div>
+          <div class="flex items-start"><div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mr-4 flex-shrink-0"><i class="fas fa-clock text-red-600"></i></div><div><h3 class="font-bold text-lg">Office Hours</h3><p class="text-gray-600">Mon - Fri: 9:00 AM - 5:00 PM<br>Sat: 9:00 AM - 1:00 PM</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-16"><h2 class="text-3xl font-bold mb-6 section-title">Find Us on Map</h2><div class="rounded-xl overflow-hidden"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3807.0!2d78.486671!3d17.385044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTfCsDIzJzA2LjIiTiA3OMKwMjknMTIuMCJF!5e0!3m2!1sen!2sin!4v1234567890" width="100%" height="450" style="border:0" allowfullscreen="" loading="lazy"></iframe></div></div>
+  </div>
+</section>
+
+<!-- ======== STUDENT LOGIN ======== -->
+<section id="page-student-login" class="page-section">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header"><div class="w-20 h-20 rounded-full bg-white bg-opacity-20 flex items-center justify-center mx-auto mb-4"><i class="fas fa-user-graduate text-3xl"></i></div><h2 class="text-2xl font-bold">Student Portal</h2><p>National Institute of Technology</p></div>
+      <div class="login-body">
+        <div class="ui form">
+          <div class="field"><label>College Email</label><div class="ui left icon input"><i class="envelope icon"></i><input type="email" id="studentEmail" placeholder="yourname@nithyderabad.edu"></div></div>
+          <div class="field"><label>Password</label><div class="ui left icon input"><i class="lock icon"></i><input type="password" id="studentPassword" placeholder="Enter your password"></div></div>
+          <button class="btn-primary w-full py-3 text-lg" onclick="studentLogin()">Login</button>
+          <div class="ui message mt-4"><div class="header">Demo Credentials</div><p id="demoCredMsg">Loading...</p></div>
+          <div id="studentLoginError" class="ui negative message" style="display:none"><p id="studentLoginErrorMsg">Invalid email or password.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== STUDENT DASHBOARD ======== -->
+<section id="page-student-dashboard" class="page-section">
+  <div class="dashboard-sidebar" id="studentSidebar">
+    <div class="p-4 border-b border-white border-opacity-10">
+      <div class="flex items-center">
+        <div class="w-12 h-12 rounded-full overflow-hidden mr-3 bg-white bg-opacity-20 flex items-center justify-center" id="sSidebarAvatar"><i class="fas fa-user-graduate text-white text-lg"></i></div>
+        <div><h3 class="text-white font-bold text-sm" id="sSidebarName">Student</h3><p class="text-blue-200 text-xs" id="sSidebarBranch">Branch</p></div>
+      </div>
+    </div>
+    <nav class="mt-4">
+      <a class="sidebar-link active" onclick="showStudentSection('profile',this)"><i class="fas fa-user"></i><span>My Profile</span></a>
+      <a class="sidebar-link" onclick="showStudentSection('attendance',this)"><i class="fas fa-calendar-check"></i><span>Attendance</span></a>
+      <a class="sidebar-link" onclick="showStudentSection('academics',this)"><i class="fas fa-book"></i><span>Academics</span></a>
+      <a class="sidebar-link" onclick="studentLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+    </nav>
+  </div>
+  <div class="dashboard-content">
+    <div class="dashboard-header">
+      <div class="flex items-center"><button class="mr-4 text-gray-600 md:hidden" onclick="document.getElementById('studentSidebar').classList.toggle('mobile-open')"><i class="fas fa-bars text-xl"></i></button><h2 class="text-xl font-bold" id="studentSectionTitle">My Profile</h2></div>
+      <div class="flex items-center"><div class="w-8 h-8 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center mr-2" id="sHeaderAvatar"><i class="fas fa-user text-blue-600 text-sm"></i></div><span class="hidden md:inline font-medium" id="sHeaderName">Student</span></div>
+    </div>
+
+    <!-- Profile -->
+    <div id="student-profile" class="student-section">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="profile-card">
+          <div class="profile-header"><div class="profile-avatar" id="spAvatarWrap"><img id="spAvatarImg" src="" alt="" class="w-full h-full object-cover hidden"><div id="spAvatarFallback" class="w-full h-full bg-blue-100 flex items-center justify-center"><i class="fas fa-user text-blue-600 text-3xl"></i></div></div></div>
+          <div class="p-6 text-center mt-16">
+            <h2 class="text-2xl font-bold" id="spName">-</h2>
+            <p class="text-gray-500" id="spRoll">-</p>
+            <div class="mt-4"><span class="badge badge-info" id="spBranch">-</span> <span class="badge badge-success" id="spSem">-</span></div>
+            <div class="mt-6"><div class="flex justify-between mb-2"><span class="text-gray-600">Attendance</span><span class="font-bold" id="spAtt">0%</span></div><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-blue-600 h-2.5 rounded-full" id="spAttBar" style="width:0%"></div></div></div>
+          </div>
+        </div>
+        <div class="lg:col-span-2">
+          <div class="custom-card p-6 mb-6"><h3 class="text-xl font-bold mb-4">Personal Information</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><p class="text-gray-500 text-sm">Email</p><p class="font-medium" id="spEmail">-</p></div><div><p class="text-gray-500 text-sm">Phone</p><p class="font-medium" id="spPhone">-</p></div><div><p class="text-gray-500 text-sm">Percentage</p><p class="font-medium" id="spPerc">-</p></div><div><p class="text-gray-500 text-sm">Status</p><p class="font-medium"><span class="badge badge-success">Active</span></p></div></div></div>
+          <div class="custom-card p-6"><h3 class="text-xl font-bold mb-4">Skills</h3><div class="flex flex-wrap gap-2" id="spSkills"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance -->
+    <div id="student-attendance" class="student-section" style="display:none">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="stat-card blue"><p class="text-gray-500 text-sm">Total Classes</p><h3 class="text-2xl font-bold mt-1" id="saTotal">0</h3></div>
+        <div class="stat-card green"><p class="text-gray-500 text-sm">Attended</p><h3 class="text-2xl font-bold mt-1" id="saAttended">0</h3></div>
+        <div class="stat-card yellow"><p class="text-gray-500 text-sm">Percentage</p><h3 class="text-2xl font-bold mt-1" id="saPerc">0%</h3></div>
+      </div>
+      <div class="custom-card p-6">
+        <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold">Attendance Calendar</h3><div class="flex space-x-4"><button class="btn-primary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button><span class="flex items-center font-bold" id="calMonth">Jun 2024</span><button class="btn-primary" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button></div></div>
+        <div class="flex justify-center mb-4 gap-4"><div class="flex items-center"><div class="w-4 h-4 rounded-full bg-green-500 mr-2"></div><span class="text-sm text-gray-600">Present</span></div><div class="flex items-center"><div class="w-4 h-4 rounded-full bg-red-500 mr-2"></div><span class="text-sm text-gray-600">Absent</span></div></div>
+        <div class="grid grid-cols-7 gap-2" id="calGrid"></div>
+      </div>
+    </div>
+
+    <!-- Academics -->
+    <div id="student-academics" class="student-section" style="display:none">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="custom-card p-6"><h3 class="text-xl font-bold mb-4">Semester Details</h3><div class="space-y-4"><div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg"><span>Semester</span><span class="badge badge-info" id="sacSem">-</span></div><div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg"><span>Branch</span><span class="badge badge-success" id="sacBranch">-</span></div><div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg"><span>Percentage</span><span class="font-bold" id="sacPerc">-</span></div><div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg"><span>Attendance</span><span class="font-bold" id="sacAtt">-</span></div></div></div>
+        <div class="custom-card p-6"><h3 class="text-xl font-bold mb-4">Current Subjects</h3><div class="space-y-3" id="sacSubjects"></div></div>
+      </div>
+      <div class="custom-card p-6 mt-6"><h3 class="text-xl font-bold mb-4">Semester-wise Performance</h3><table class="custom-table"><thead><tr><th>Semester</th><th>SGPA</th><th>Percentage</th><th>Status</th></tr></thead><tbody id="sacPerfTable"></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS MODAL -->
+<div class="ui modal" id="newsModal"><div class="header" id="newsModalTitle">News</div><div class="content" id="newsModalContent"></div><div class="actions"><div class="ui positive button" onclick="$('#newsModal').modal('hide')">Close</div></div></div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;top:20px;right:20px;z-index:9999;display:none"><div class="ui positive message" style="min-width:300px"><i class="close icon" onclick="$('#toast').hide()"></i><div class="header" id="toastMsg">Success</div></div></div>
+
+<!-- FOOTER -->
+<footer class="footer" id="mainFooter">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div><div class="flex items-center mb-4 cursor-pointer" onclick="navigateTo('home')"><div class="w-12 h-12 rounded-full bg-white bg-opacity-10 flex items-center justify-center mr-3"><i class="fas fa-university text-xl"></i></div><div><h3 class="text-lg font-bold">NIT</h3><p class="text-blue-200 text-xs">National Institute of Technology</p></div></div><p class="text-blue-200 text-sm">Established in 1955, NIT is a premier engineering institution.</p></div>
+      <div><h3 class="text-lg font-bold mb-4">Quick Links</h3><ul class="space-y-2"><li><a href="#" onclick="navigateTo('home')">Home</a></li><li><a href="#" onclick="navigateTo('about')">About Us</a></li><li><a href="#" onclick="navigateTo('departments')">Departments</a></li><li><a href="#" onclick="navigateTo('contact')">Contact</a></li></ul></div>
+      <div><h3 class="text-lg font-bold mb-4">Departments</h3><ul class="space-y-2"><li><a href="#" onclick="navigateTo('departments')">AINML</a></li><li><a href="#" onclick="navigateTo('departments')">CSE</a></li><li><a href="#" onclick="navigateTo('departments')">ECE</a></li><li><a href="#" onclick="navigateTo('departments')">EEE</a></li><li><a href="#" onclick="navigateTo('departments')">Mechanical</a></li></ul></div>
+      <div><h3 class="text-lg font-bold mb-4">Contact Info</h3><ul class="space-y-2 text-blue-200 text-sm"><li><i class="fas fa-map-marker-alt mr-2"></i>NIT, Hyderabad - 500001</li><li><i class="fas fa-phone-alt mr-2"></i>+91 40 2345 6789</li><li><i class="fas fa-envelope mr-2"></i>info@nithyderabad.edu</li></ul></div>
+    </div>
+    <div class="footer-bottom text-center"><p class="text-blue-200 text-sm">&copy; 2024 National Institute of Technology. All Rights Reserved.</p></div>
+  </div>
+</footer>
+
+<!-- ======== FINGERPRINT/FACE SCAN MODAL ======== -->
+<div class="scan-modal" id="scanModal">
+  <div class="scan-box">
+    <h3 class="text-xl font-bold mb-2" id="scanTitle">Fingerprint Scan</h3>
+    <p class="text-gray-500 mb-4" id="scanSubtitle">Place your finger on the scanner</p>
+    <div class="scan-ring" id="scanRing">
+      <i class="fas fa-fingerprint text-6xl text-blue-700" id="scanIcon"></i>
+    </div>
+    <div id="scanStatus" class="text-gray-500 mt-4 text-sm">Scanning...</div>
+    <div class="mt-6 flex gap-3 justify-center">
+      <button class="btn-primary" onclick="simulateScan()">Simulate Scan</button>
+      <button onclick="closeScanModal()" style="background:#dc3545" class="btn-primary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== PHOTO POOLS ======
+const STUDENT_PHOTOS = {
+  male: [
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80',
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80',
+    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&q=80',
+    'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&q=80',
+    'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=150&q=80',
+    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&q=80',
+    'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&q=80',
+    'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=150&q=80',
+    'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&q=80',
+    'https://images.unsplash.com/photo-1542178243-bc20204b769f?w=150&q=80',
+    'https://images.unsplash.com/photo-1548449112-96a38a643324?w=150&q=80',
+    'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=150&q=80',
+  ],
+  female: [
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80',
+    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80',
+    'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80',
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80',
+    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80',
+    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&q=80',
+    'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&q=80',
+    'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&q=80',
+  ]
+};
+
+function getPhoto(name, id) {
+  const femaleNames = ['Ananya','Diya','Myra','Sara','Aadhya','Kiara','Riya','Priya','Pooja','Neha','Divya','Lakshmi','Kavitha','Meera','Swathi','Priyanka','Anjali','Deepika','Shruti','Devi','Eswari','Fatima','Geetha','Hema','Indira','Jayanthi','Kamala','Lalitha','Madhuri','Nirmala','Padma','Revathi','Sujatha','Uma','Vasundhara','Yamini','Zara'];
+  const firstName = name.split(' ')[0];
+  const isFemale = femaleNames.some(fn => fn.toLowerCase() === firstName.toLowerCase());
+  const pool = isFemale ? STUDENT_PHOTOS.female : STUDENT_PHOTOS.male;
+  return pool[id % pool.length];
+}
+
+// ====== DB ======
+function getStudents(){return JSON.parse(localStorage.getItem('nit_students')||'[]')}
+function getTeachers(){return JSON.parse(localStorage.getItem('nit_teachers')||'[]')}
+function getAttendance(){return JSON.parse(localStorage.getItem('nit_attendance')||'{}')}
+function getNews(){return JSON.parse(localStorage.getItem('nit_news')||'[]')}
+
+// ====== INIT DATA ======
+function initData(){
+  // Clear old cache if version mismatch
+  const ver = localStorage.getItem('nit_version');
+  if(ver !== 'v3_photos'){
+    localStorage.removeItem('nit_students');
+    localStorage.removeItem('nit_teachers');
+    localStorage.removeItem('nit_attendance');
+    localStorage.setItem('nit_version','v3_photos');
+  }
+  if(getStudents().length>0)return;
+  const branches=['AINML','CSE','ECE','EEE','MECHANICAL'];
+  const fn=['Aarav','Vivaan','Aditya','Vihaan','Arjun','Sai','Reyansh','Krishna','Ishaan','Shaurya','Ananya','Diya','Myra','Sara','Aadhya','Kiara','Riya','Priya','Pooja','Neha','Rahul','Amit','Rohit','Vikram','Raj','Suresh','Mahesh','Kiran','Naveen','Pradeep','Divya','Lakshmi','Kavitha','Meera','Swathi','Priyanka','Anjali','Deepika','Shruti','Ravi','Sunil','Ganesh','Karthik','Harsha','Nithin','Pavan','Sandeep','Manoj','Ramesh','Sridhar'];
+  const ln=['Sharma','Verma','Patel','Reddy','Kumar','Singh','Gupta','Rao','Nair','Joshi','Mehta','Desai','Iyer','Krishnan','Murthy','Pillai','Naidu','Choudhary','Mishra','Saxena'];
+  const sk={AINML:['Python','TensorFlow','PyTorch','ML','DL','NLP','CV','Data Science'],CSE:['C','C++','Java','Python','JavaScript','React','Node.js','SQL'],ECE:['MATLAB','VLSI','Verilog','Embedded C','PCB Design','DSP'],EEE:['MATLAB','PLC','SCADA','AutoCAD','Power Systems','Control Systems'],MECHANICAL:['AutoCAD','SolidWorks','ANSYS','MATLAB','CNC','Thermodynamics']};
+  const sb={AINML:['AI Fundamentals','ML','DL','NLP','CV','Reinforcement Learning'],CSE:['Data Structures','Algorithms','DBMS','OS','Networks','Software Engg'],ECE:['Electronic Devices','Circuits','Signals','Communication','DSP','VLSI'],EEE:['Electrical Circuits','Machines','Power Systems','Control','Power Electronics'],MECHANICAL:['Thermodynamics','SOM','Fluid Mechanics','Manufacturing','Kinematics']};
+  let students=[],id=1;
+  branches.forEach(br=>{
+    for(let i=0;i<50;i++){
+      const name=fn[Math.floor(Math.random()*fn.length)]+' '+ln[Math.floor(Math.random()*ln.length)];
+      const sem=Math.floor(Math.random()*8)+1;
+      const bc=br==='MECHANICAL'?'ME':br;
+      const roll=bc+String(sem).padStart(2,'0')+String(i+1).padStart(3,'0');
+      const email=(name.split(' ')[0].toLowerCase()+name.split(' ')[1].toLowerCase()+(i+1))+'@nithyderabad.edu';
+      const phone='+91 '+Math.floor(Math.random()*9+7)+String(Math.floor(Math.random()*100000000)).padStart(8,'0');
+      const skills=sk[br].sort(()=>0.5-Math.random()).slice(0,Math.floor(Math.random()*4)+2);
+      const subjects=sb[br].slice(0,Math.min(4+Math.floor(sem/2),sb[br].length));
+      students.push({id:id++,name,rollNumber:roll,branch:br,semester:sem,percentage:+(Math.random()*35+55).toFixed(1),attendance:+(Math.random()*30+65).toFixed(1),phone,email,password:'student123',skills,subjects});
+    }
+  });
+  localStorage.setItem('nit_students',JSON.stringify(students));
+  setDefaultTeachers();
+  setDefaultNews();
+  // Attendance
+  const att={};
+  students.forEach(s=>{
+    for(let d=1;d<=28;d++){const ds='2024-06-'+String(d).padStart(2,'0');if(new Date(ds).getDay()===0)return;if(!att[ds])att[ds]={};att[ds][s.rollNumber]=Math.random()>0.15?'present':'absent';}
+  });
+  localStorage.setItem('nit_attendance',JSON.stringify(att));
+}
+
+function setDefaultTeachers(){
+  if(getTeachers().length>0)return;
+  const teachers=[
+    {name:'Dr. Ananya Sharma',id:'T001',qual:'Ph.D. ML, IIT Delhi',dept:'AINML',sub:'Machine Learning',exp:15,email:'ananya@nit.edu',mob:'+91 9876543210'},
+    {name:'Dr. Rahul Verma',id:'T002',qual:'Ph.D. CV, IISc',dept:'AINML',sub:'Computer Vision',exp:12,email:'rahul@nit.edu',mob:'+91 9876543211'},
+    {name:'Dr. Priya Patel',id:'T003',qual:'Ph.D. NLP, IIIT',dept:'AINML',sub:'NLP',exp:8,email:'priya@nit.edu',mob:'+91 9876543212'},
+    {name:'Dr. Vikram Singh',id:'T004',qual:'Ph.D. IIT Bombay',dept:'CSE',sub:'OS',exp:18,email:'vikram@nit.edu',mob:'+91 9876543213'},
+    {name:'Dr. Meera Gupta',id:'T005',qual:'Ph.D. NIT Trichy',dept:'CSE',sub:'Cybersecurity',exp:14,email:'meera@nit.edu',mob:'+91 9876543214'},
+    {name:'Dr. Arjun Reddy',id:'T006',qual:'Ph.D. JNTUH',dept:'CSE',sub:'Cloud Computing',exp:10,email:'arjun@nit.edu',mob:'+91 9876543215'},
+    {name:'Dr. Suresh Babu',id:'T007',qual:'Ph.D. VLSI, IIT Madras',dept:'ECE',sub:'VLSI Design',exp:20,email:'suresh@nit.edu',mob:'+91 9876543216'},
+    {name:'Dr. Kavitha Raman',id:'T008',qual:'Ph.D. DSP, NIT Calicut',dept:'ECE',sub:'DSP',exp:16,email:'kavitha@nit.edu',mob:'+91 9876543217'},
+    {name:'Dr. Rajesh Nair',id:'T009',qual:'Ph.D. Embedded, BITS',dept:'ECE',sub:'Embedded Systems',exp:9,email:'rajesh@nit.edu',mob:'+91 9876543218'},
+    {name:'Dr. Mohan Krishna',id:'T010',qual:'Ph.D. IIT Kharagpur',dept:'EEE',sub:'Power Systems',exp:22,email:'mohan@nit.edu',mob:'+91 9876543219'},
+    {name:'Dr. Lakshmi Devi',id:'T011',qual:'Ph.D. NIT Warangal',dept:'EEE',sub:'Control Systems',exp:13,email:'lakshmi@nit.edu',mob:'+91 9876543220'},
+    {name:'Dr. Srinivas Rao',id:'T012',qual:'Ph.D. JNTUK',dept:'EEE',sub:'Renewable Energy',exp:7,email:'srinivas@nit.edu',mob:'+91 9876543221'},
+    {name:'Dr. Rajesh Kumar',id:'T013',qual:'Ph.D. IIT Kanpur',dept:'MECHANICAL',sub:'Thermodynamics',exp:19,email:'rajeshk@nit.edu',mob:'+91 9876543222'},
+    {name:'Dr. Sunita Sharma',id:'T014',qual:'Ph.D. NIT Rourkela',dept:'MECHANICAL',sub:'Manufacturing',exp:11,email:'sunita@nit.edu',mob:'+91 9876543223'},
+    {name:'Dr. Anil Patel',id:'T015',qual:'Ph.D. BITS',dept:'MECHANICAL',sub:'Machine Design',exp:6,email:'anil@nit.edu',mob:'+91 9876543224'}
+  ];
+  localStorage.setItem('nit_teachers',JSON.stringify(teachers));
+}
+
+function setDefaultNews(){
+  if(getNews().length>0)return;
+  const news=[
+    {id:1,title:'Placement Drive 2024',date:'June 15, 2024',icon:'fas fa-newspaper',color:'blue',short:'Top companies like Google, Microsoft, Amazon visiting campus. Register by June 20.',full:'Top companies including Google, Microsoft, and Amazon are visiting campus for 2024 placement season. All eligible students from 7th and 8th semester must register through the placement portal by June 20, 2024.'},
+    {id:2,title:'TechFest 2024 Winners',date:'June 10, 2024',icon:'fas fa-trophy',color:'green',short:'Students secured 1st in National Robotics Competition and 2nd in Hackathon.',full:'Our students brought laurels to the institute by securing first place in the National Robotics Competition at IIT Delhi and second place in the 48-hour National Hackathon.'},
+    {id:3,title:'International Conference on AI',date:'June 5, 2024',icon:'fas fa-calendar-alt',color:'yellow',short:'CSE Dept organizing International Conference on AI from July 10-12.',full:'The Department of CSE is organizing a 3-day International Conference on Advances in AI and ML from July 10-12, 2024. Paper submissions open until June 30.'}
+  ];
+  localStorage.setItem('nit_news',JSON.stringify(news));
+}
+
+// ====== HOME NEWS FEED (Real-time from admin) ======
+function renderHomeNews(){
+  const news=getNews();
+  const colorMap={blue:'bg-blue-100 text-blue-600',green:'bg-green-100 text-green-600',yellow:'bg-yellow-100 text-yellow-600',red:'bg-red-100 text-red-600'};
+  let h='';
+  news.forEach(n=>{
+    const cc=colorMap[n.color]||colorMap.blue;
+    h+=`<div class="custom-card p-6"><div class="flex items-center mb-4"><div class="w-12 h-12 rounded-full ${cc.split(' ')[0]} flex items-center justify-center mr-4"><i class="${n.icon} ${cc.split(' ')[1]}"></i></div><div><p class="text-sm text-gray-500">${n.date}</p><h3 class="font-bold">${n.title}</h3></div></div><p class="text-gray-600">${n.short}</p><a class="text-blue-600 font-medium mt-4 inline-block cursor-pointer hover:text-blue-800" onclick="showNewsDetail(${n.id})">Read More <i class="fas fa-arrow-right ml-1"></i></a></div>`;
+  });
+  const el=document.getElementById('homeNewsFeed');
+  if(el)el.innerHTML=h||'<div class="col-span-3 text-center text-gray-500">No news available</div>';
+}
+
+function showNewsDetail(id){
+  const news=getNews();
+  const n=news.find(x=>x.id===id);
+  if(!n)return;
+  document.getElementById('newsModalTitle').textContent=n.title;
+  document.getElementById('newsModalContent').innerHTML='<p class="text-gray-600">'+n.full+'</p>';
+  $('#newsModal').modal('show');
+}
+
+// ====== NAVIGATION ======
+function navigateTo(page){
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('page-'+page);
+  if(el){el.classList.add('active');window.scrollTo(0,0);}
+  const isDash=['student-dashboard'].includes(page);
+  document.getElementById('mainNavbar').style.display=isDash?'none':'block';
+  document.getElementById('mainFooter').style.display=isDash?'none':'block';
+  if(page==='home')renderHomeNews();
+}
+function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('hidden')}
+function showDept(dept,btn){
+  document.querySelectorAll('.dept-section').forEach(d=>d.style.display='none');
+  document.getElementById('dept-'+dept).style.display='block';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function showToast(msg){document.getElementById('toastMsg').textContent=msg;$('#toast').show();setTimeout(()=>$('#toast').hide(),3000)}
+
+// ====== STUDENT LOGIN ======
+let currentStudent=null,calYear=2024,calMonth=5;
+function studentLogin(){
+  const students=getStudents();
+  const email=document.getElementById('studentEmail').value,pass=document.getElementById('studentPassword').value;
+  const student=students.find(s=>s.email===email&&s.password===pass);
+  if(student){currentStudent=student;document.getElementById('studentLoginError').style.display='none';navigateTo('student-dashboard');loadStudentDashboard();}
+  else{
+    // Show helpful error with first student email
+    const students=getStudents();
+    const hint = students.length>0 ? students[0].email : 'student@nithyderabad.edu';
+    document.getElementById('studentLoginErrorMsg').textContent='Invalid email or password. Try: '+hint+' / student123';
+    document.getElementById('studentLoginError').style.display='block';
+  }
+}
+function studentLogout(){currentStudent=null;navigateTo('home')}
+
+function loadStudentDashboard(){
+  if(!currentStudent)return;
+  currentStudent=getStudents().find(s=>s.id===currentStudent.id)||currentStudent;
+  const photo=getPhoto(currentStudent.name,currentStudent.id);
+  // sidebar avatar
+  document.getElementById('sSidebarName').textContent=currentStudent.name.split(' ')[0];
+  document.getElementById('sSidebarBranch').textContent=currentStudent.branch+' | Sem '+currentStudent.semester;
+  document.getElementById('sHeaderName').textContent=currentStudent.name;
+  // Profile photo
+  const img=document.getElementById('spAvatarImg');
+  img.src=photo;img.classList.remove('hidden');
+  document.getElementById('spAvatarFallback').classList.add('hidden');
+  document.getElementById('sHeaderAvatar').innerHTML='<img src="'+photo+'" class="w-full h-full object-cover" style="border-radius:50%">';
+  document.getElementById('sSidebarAvatar').innerHTML='<img src="'+photo+'" class="w-full h-full object-cover" style="border-radius:50%;width:48px;height:48px">';
+  // Info
+  document.getElementById('spName').textContent=currentStudent.name;
+  document.getElementById('spRoll').textContent=currentStudent.rollNumber;
+  document.getElementById('spBranch').textContent=currentStudent.branch;
+  document.getElementById('spSem').textContent='Sem '+currentStudent.semester;
+  document.getElementById('spAtt').textContent=currentStudent.attendance+'%';
+  document.getElementById('spAttBar').style.width=currentStudent.attendance+'%';
+  document.getElementById('spEmail').textContent=currentStudent.email;
+  document.getElementById('spPhone').textContent=currentStudent.phone;
+  document.getElementById('spPerc').textContent=currentStudent.percentage+'%';
+  document.getElementById('spSkills').innerHTML=(currentStudent.skills||[]).map(sk=>'<span class="badge badge-info">'+sk+'</span>').join('');
+  // Attendance stats
+  const att=getAttendance();let total=0,present=0;
+  Object.keys(att).forEach(dt=>{if(att[dt][currentStudent.rollNumber]){total++;if(att[dt][currentStudent.rollNumber]==='present')present++;}});
+  document.getElementById('saTotal').textContent=total;
+  document.getElementById('saAttended').textContent=present;
+  document.getElementById('saPerc').textContent=total>0?((present/total)*100).toFixed(1)+'%':'0%';
+  // Academics
+  document.getElementById('sacSem').textContent='Sem '+currentStudent.semester;
+  document.getElementById('sacBranch').textContent=currentStudent.branch;
+  document.getElementById('sacPerc').textContent=currentStudent.percentage+'%';
+  document.getElementById('sacAtt').textContent=currentStudent.attendance+'%';
+  document.getElementById('sacSubjects').innerHTML=(currentStudent.subjects||[]).map(sub=>'<div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg"><span class="font-medium">'+sub+'</span><span class="badge badge-success">Active</span></div>').join('');
+  let perfHtml='';
+  for(let i=1;i<currentStudent.semester;i++){const sgpa=(Math.random()*2+7).toFixed(2),perc=(Math.random()*20+70).toFixed(1);perfHtml+='<tr><td>Semester '+i+'</td><td>'+sgpa+'</td><td>'+perc+'%</td><td><span class="badge badge-success">Passed</span></td></tr>';}
+  document.getElementById('sacPerfTable').innerHTML=perfHtml||'<tr><td colspan="4" class="text-center text-gray-500">No previous semester data</td></tr>';
+  renderCalendar();
+}
+
+function showStudentSection(section,btn){
+  document.querySelectorAll('.student-section').forEach(s=>s.style.display='none');
+  document.getElementById('student-'+section).style.display='block';
+  document.getElementById('studentSectionTitle').textContent=section==='profile'?'My Profile':section==='attendance'?'Attendance':'Academics';
+  document.querySelectorAll('#studentSidebar .sidebar-link').forEach(l=>l.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('studentSidebar').classList.remove('mobile-open');
+}
+
+function changeMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+
+function renderCalendar(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonth').textContent=months[calMonth]+' '+calYear;
+  const firstDay=new Date(calYear,calMonth,1).getDay(),daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  let html=['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>'<div class="text-center font-bold text-gray-500 text-sm py-2">'+d+'</div>').join('');
+  for(let i=0;i<firstDay;i++)html+='<div></div>';
+  const att=getAttendance();
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const status=att[ds]&&currentStudent&&att[ds][currentStudent.rollNumber];
+    const cls=status==='present'?'present':status==='absent'?'absent':'';
+    const bg=!status?'bg-gray-100 text-gray-400':'';
+    html+='<div class="calendar-day '+cls+' '+bg+'">'+d+'</div>';
+  }
+  document.getElementById('calGrid').innerHTML=html;
+}
+
+// ====== FINGERPRINT/FACE SCAN ======
+let scanCallback=null;
+function openScanModal(type,callback){
+  scanCallback=callback;
+  const isFingerprint=type==='fingerprint';
+  document.getElementById('scanTitle').textContent=isFingerprint?'Fingerprint Scan':'Face Recognition';
+  document.getElementById('scanSubtitle').textContent=isFingerprint?'Place your finger on the scanner':'Look at the camera';
+  document.getElementById('scanIcon').className=isFingerprint?'fas fa-fingerprint text-6xl text-blue-700':'fas fa-camera text-6xl text-blue-700';
+  document.getElementById('scanStatus').textContent='Scanning...';
+  document.getElementById('scanRing').className='scan-ring';
+  document.getElementById('scanModal').classList.add('open');
+}
+function closeScanModal(){document.getElementById('scanModal').classList.remove('open');scanCallback=null;}
+function simulateScan(){
+  document.getElementById('scanStatus').textContent='Verifying identity...';
+  setTimeout(()=>{
+    document.getElementById('scanRing').classList.add('success');
+    document.getElementById('scanIcon').className='fas fa-check-circle text-6xl text-green-600';
+    document.getElementById('scanStatus').textContent='✓ Verified Successfully!';
+    setTimeout(()=>{closeScanModal();if(scanCallback)scanCallback(true);},1000);
+  },1500);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  initData();
+  renderHomeNews();
+  // Show real demo credentials
+  const students=getStudents();
+  if(students.length>0){
+    const s=students[0];
+    const el=document.getElementById('demoCredMsg');
+    if(el) el.innerHTML='Email: <strong>'+s.email+'</strong><br>Password: <strong>student123</strong>';
+  }
+  $('.ui.dropdown').dropdown();$('.ui.modal').modal();
+  document.getElementById('studentPassword').addEventListener('keypress',e=>{if(e.key==='Enter')studentLogin()});
+});
+</script>
+</body>
+</html>
